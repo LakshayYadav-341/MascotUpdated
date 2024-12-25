@@ -1,8 +1,8 @@
-import EducationHandler from "@handlers/user/education";
-import { verifyBody, verifyToken } from "@server/middleware/verify";
-import Education from "@server/models/user/education";
-import Profile from "@server/models/user/profile";
-import { getValue } from "@utils/object";
+import EducationHandler from "../../handlers/user/education";
+import { verifyBody, verifyToken } from "../../server/middleware/verify";
+import Education from "../../server/models/user/education";
+import Profile from "../../server/models/user/profile";
+import { getValue } from "../../utils/object";
 import { Router } from "express";
 
 const app = Router();

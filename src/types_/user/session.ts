@@ -1,5 +1,5 @@
-import { Time } from "@types_";
-import IMongoDocument from "@types_/mongo";
+import { Time } from "../../types_";
+import IMongoDocument from "../../types_/mongo";
 import { JwtPayload } from "jsonwebtoken";
 import IUser from ".";
 

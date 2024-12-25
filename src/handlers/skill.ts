@@ -1,6 +1,6 @@
-import ISkill from "@types_/skill";
+import ISkill from "../types_/skill";
 import { ErrorHandler } from "./error";
-import { Models } from "@utils/models";
+import { Models } from "../utils/models";
 
 export default class SkillHandler extends ErrorHandler<ISkill> {
     constructor() {

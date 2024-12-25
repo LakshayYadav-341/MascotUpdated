@@ -1,6 +1,6 @@
-import FacultyHandler from "@handlers/institute/faculty";
-import IFaculty from "@types_/institute/faculty";
-import { Models } from "@utils/models";
+import FacultyHandler from "../../../handlers/institute/faculty";
+import IFaculty from "../../../types_/institute/faculty";
+import { Models } from "../../../utils/models";
 import { model, Schema } from "mongoose";
 
 const handler = new FacultyHandler()

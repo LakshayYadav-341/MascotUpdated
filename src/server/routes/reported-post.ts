@@ -1,9 +1,9 @@
-import { verifyBody, verifyToken, verifyParams, verifyAdmin } from "@server/middleware/verify";
-import ReportedPost from "@server/models/feed/reported-post";
-import IUser from "@types_/user";
+import { verifyBody, verifyToken, verifyParams, verifyAdmin } from "../../server/middleware/verify";
+import ReportedPost from "../../server/models/feed/reported-post";
+import IUser from "../../types_/user";
 import { Router } from "express";
-import { getValue } from "@utils/object";
-import ReportedPostHandler from "@handlers/feed/reported-post";
+import { getValue } from "../../utils/object";
+import ReportedPostHandler from "../../handlers/feed/reported-post";
 
 const app = Router();
 const handler = new ReportedPostHandler();

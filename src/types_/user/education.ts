@@ -1,6 +1,6 @@
-import IMongoDocument from "@types_/mongo";
+import IMongoDocument from "../../types_/mongo";
 import IInstitute from "../institute";
-import { Time } from "@types_";
+import { Time } from "../../types_";
 
 export enum EducationTypes {
     metric = "metric",

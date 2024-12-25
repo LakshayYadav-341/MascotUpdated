@@ -1,4 +1,4 @@
-import IMongoDocument from "@types_/mongo";
+import IMongoDocument from "../../types_/mongo";
 import IUser from ".";
 
 export default interface IReportedUser extends IMongoDocument{

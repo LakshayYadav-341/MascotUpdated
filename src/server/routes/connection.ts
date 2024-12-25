@@ -1,144 +1,115 @@
-import ConnectionHandler from "@handlers/user/connection";
-import { verifyToken, verifyParams } from "@server/middleware/verify";
-import Connection from "@server/models/user/connection";
+import ConnectionHandler from "../../handlers/user/connection";
+import { verifyToken, verifyParams } from "../../server/middleware/verify";
+import Connection from "../../server/models/user/connection";
 import { Router } from "express";
-import { getValue } from "@utils/object";
-import IUser from "@types_/user";
+import { getValue } from "../../utils/object";
+import IUser from "../../types_/user";
 
 const app = Router();
 const handler = new ConnectionHandler();
 
 
+// POST request to create a connection
 app.post("/create", verifyToken(), async (req, res) => {
-    const { userIds } = req.body;
-    const connection = await Connection.create({
-        users: userIds,
-    });
-    if (!connection) {
-        return res.status(404).send(handler.error(handler.STATUS_404));
+    try {
+        const { userIds } = req.body;
+        if (!userIds || userIds.length < 2) {
+            return res.status(400).send(handler.error("User IDs are required and must contain at least two users."));
+        }
+
+        const connection = await Connection.create({
+            users: userIds,
+        });
+
+        if (!connection) {
+            return res.status(404).send(handler.error(handler.STATUS_404));
+        }
+
+        return res.status(200).send(handler.success(connection));
+    } catch (error) {
+        console.error("Error creating connection:", error);
+        return res.status(500).send(handler.error("Internal server error. Could not create connection."));
     }
-    return res.status(200).send(handler.success(connection));
 });
 
-// app.get("/:user", verifyToken(), verifyParams(["user"]), async (_, res) => {
-//     const { keys, values } = res.locals;
-//     const connectionRequests = await ConnectionRequest.find({ to: getValue(keys, values, "user") })
-//         .populate({
-//             path: 'from',
-//             match: { _id: { $ne: getValue(keys, values, "user") } } // Exclude the user in params
-//         })
-//         .exec();
-
-//     if (!connectionRequests) {
-//         return res.status(404).send(handler.error(handler.STATUS_404));
-//     }
-//     return res.status(200).send(handler.success(connectionRequests));
-// });
-
-
-/**
- * @swagger
- * /api/connections/:user:
- *   get:
- *     summary: Retrieve all connections
- *     description: Retrieve all connections from the database.
- *     responses:
- *       '200':
- *         description: A successful response with an array of connections.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/definitions/Connection'
- *       '500':
- *         description: Internal Server Error.
- * definitions:
- *   Connection:
- *     type: object
- *     properties:
- *       // Define properties of the Connection object here
- */
-
-
+// GET request to retrieve all connections
 app.get("/", async (_, res) => {
-    const connections = await Connection.find();
-    return res.status(200).send(handler.success(connections));
+    try {
+        const connections = await Connection.find();
+        if (!connections || connections.length === 0) {
+            return res.status(404).send(handler.error("No connections found."));
+        }
+        return res.status(200).send(handler.success(connections));
+    } catch (error) {
+        console.error("Error retrieving connections:", error);
+        return res.status(500).send(handler.error("Internal server error. Could not fetch connections."));
+    }
 });
 
-
+// GET request to retrieve a specific connection by its ID
 app.get("/:id", async (req, res) => {
-    const connectionId = req.params.id;
-    const connection = await Connection.findById(connectionId);
-    if (!connection) {
-        return res.status(404).send(handler.error(handler.STATUS_404));
+    try {
+        const connectionId = req.params.id;
+        if (!connectionId) {
+            return res.status(400).send(handler.error("Connection ID is required."));
+        }
+
+        const connection = await Connection.findById(connectionId);
+        if (!connection) {
+            return res.status(404).send(handler.error("Connection not found."));
+        }
+
+        return res.status(200).send(handler.success(connection));
+    } catch (error) {
+        console.error("Error retrieving connection:", error);
+        return res.status(500).send(handler.error("Internal server error. Could not retrieve connection."));
     }
-    return res.status(200).send(handler.success(connection));
 });
 
+// DELETE request to delete a connection by its ID
 app.delete("/:id", verifyToken(), async (req, res) => {
-    const connectionId = req.params.id;
-    const connection = await Connection.findByIdAndDelete(connectionId);
-    if (!connection) {
-        return res.status(404).send(handler.error(handler.STATUS_404));
+    try {
+        const connectionId = req.params.id;
+        if (!connectionId) {
+            return res.status(400).send(handler.error("Connection ID is required."));
+        }
+
+        const connection = await Connection.findByIdAndDelete(connectionId);
+        if (!connection) {
+            return res.status(404).send(handler.error("Connection not found."));
+        }
+
+        return res.status(200).send(handler.success(connection));
+    } catch (error) {
+        console.error("Error deleting connection:", error);
+        return res.status(500).send(handler.error("Internal server error. Could not delete connection."));
     }
-    return res.status(200).send(handler.success(connection));
 });
 
+// DELETE request to remove a connection between two users
+app.delete("/delete/:id", verifyToken(), verifyParams(["id"]), async (_req, res) => {
+    try {
+        const { session, keys, values } = res.locals;
+        const loggedInUserId = (session?.user as IUser)._id;
+        const targetUserId = getValue(keys, values, "id");
 
-/**
- * @swagger
- * /api/connection/delete/{id}:
- *   delete:
- *     summary: Delete a connection
- *     description: Delete a connection between the logged-in user and another user specified by their ID.
- *     security:
- *       - jwt: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The ID of the user to delete the connection with.
- *     responses:
- *       '200':
- *         description: Successfully deleted the connection.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/definitions/Connection'
- *       '404':
- *         description: Connection not found.
- *       '401':
- *         description: Unauthorized. Token is missing or invalid.
- *       '500':
- *         description: Internal Server Error.
- *     examples:
- *       example1:
- *         summary: Example of authorization header
- *         value:
- *           headers:
- *             Authorization: Bearer <JWT-Token>
- * definitions:
- *   Connection:
- *     type: object
- *     properties:
- *       // Define properties of the Connection object here
- */
+        if (!loggedInUserId || !targetUserId) {
+            return res.status(400).send(handler.error("Both users' IDs are required."));
+        }
 
-app.delete("/delete/:id", verifyToken(), verifyParams(["id"]), async (_, res) => {
-    const {session, keys, values} = res.locals;
-    const loggedInUserId = (session?.user as IUser)._id
-    const targetUserId = getValue(keys, values, "id")
+        const connection = await Connection.deleteOne(
+            { users: { $all: [loggedInUserId, targetUserId] } },
+        );
 
-    const connection = await Connection.deleteOne(
-        { users: { $all: [loggedInUserId, targetUserId] } },
-    );
-    if (!connection) {
-        return res.status(404).send(handler.error(handler.STATUS_404))
+        if (!connection || connection.deletedCount === 0) {
+            return res.status(404).send(handler.error("Connection not found or already deleted."));
+        }
+
+        return res.status(200).send(handler.success(connection));
+    } catch (error) {
+        console.error("Error deleting connection:", error);
+        return res.status(500).send(handler.error("Internal server error. Could not delete the connection."));
     }
-    return res.status(200).send(handler.success(connection))
 });
 
 export default app;

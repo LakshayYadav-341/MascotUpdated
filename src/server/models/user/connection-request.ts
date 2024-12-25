@@ -1,6 +1,6 @@
-import ConnectionRequestHandler from "@handlers/user/connection-request"
-import IConnectionRequest, { ConnectionTypes } from "@types_/user/connection-request"
-import { Models } from "@utils/models"
+import ConnectionRequestHandler from "../../../handlers/user/connection-request"
+import IConnectionRequest, { ConnectionTypes } from "../../../types_/user/connection-request"
+import { Models } from "../../../utils/models"
 import { model, Schema } from "mongoose"
 
 const handler = new ConnectionRequestHandler()

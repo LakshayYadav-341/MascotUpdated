@@ -1,6 +1,6 @@
-import JobApplicationHandler from "@handlers/job/application";
-import IJobApplication from "@types_/job/application";
-import { Models } from "@utils/models";
+import JobApplicationHandler from "../../../handlers/job/application";
+import IJobApplication from "../../../types_/job/application";
+import { Models } from "../../../utils/models";
 import { model, Schema } from "mongoose";
 
 const handler = new JobApplicationHandler()

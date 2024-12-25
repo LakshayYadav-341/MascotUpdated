@@ -1,7 +1,7 @@
-import NewsHandler from "@handlers/feed/news";
-import { verifyAdmin, verifyBody, verifyParams, verifyToken } from "@server/middleware/verify";
-import News from "@server/models/feed/news";
-import { getValue } from "@utils/object";
+import NewsHandler from "../../handlers/feed/news";
+import { verifyAdmin, verifyBody, verifyParams, verifyToken } from "../../server/middleware/verify";
+import News from "../../server/models/feed/news";
+import { getValue } from "../../utils/object";
 import { Router } from "express";
 
 const app = Router();
@@ -283,9 +283,8 @@ app.put("/:id", verifyToken(), verifyAdmin(), verifyBody(required), async (req, 
  */
 
 
-app.delete("/:id", verifyToken(), verifyAdmin(), verifyParams(["id"]), async (req, res) => {
+app.delete("/:id", verifyToken(), verifyAdmin(), verifyParams(["id"]), async (_req, res) => {
     const { keys, values } = res.locals
-    const newsID = getValue(keys, values, "id");
     const news = await News.findByIdAndDelete(getValue(keys, values, "id"));
     if (!news) {
         return res.status(404).send(handler.error(handler.STATUS_404));

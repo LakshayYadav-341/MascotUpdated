@@ -1,7 +1,7 @@
-import AchievementHandler from "@handlers/achievement"
-import { verifyParams, verifyToken } from "@server/middleware/verify"
-import Achievement from "@server/models/achievement"
-import { getValue } from "@utils/object"
+import AchievementHandler from "../../handlers/achievement"
+import { verifyParams, verifyToken } from "../../server/middleware/verify"
+import Achievement from "../../server/models/achievement"
+import { getValue } from "../../utils/object"
 import { Router } from "express"
 
 const app = Router()

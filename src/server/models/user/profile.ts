@@ -1,5 +1,5 @@
-import IProfile from "@types_/user/profile";
-import { Models } from "@utils/models";
+import IProfile from "../../../types_/user/profile";
+import { Models } from "../../../utils/models";
 import { Schema, model } from "mongoose";
 
 

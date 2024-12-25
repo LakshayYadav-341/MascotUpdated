@@ -1,4 +1,4 @@
-import { Time } from "@types_";
+import { Time } from "../../types_";
 import IMongoDocument from "../mongo";
 import IUser from "../user";
 

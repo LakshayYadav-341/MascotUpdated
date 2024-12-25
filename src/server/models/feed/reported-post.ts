@@ -1,7 +1,7 @@
-import IReportedPost from "@types_/feed/reported-post"
-import { Models } from "@utils/models"
+import IReportedPost from "../../../types_/feed/reported-post"
+import { Models } from "../../../utils/models"
 import { model, Schema } from "mongoose"
-import ReportedPostHandler from "@handlers/feed/reported-post"
+import ReportedPostHandler from "../../../handlers/feed/reported-post"
 
 const handler = new ReportedPostHandler()
 

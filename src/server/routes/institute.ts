@@ -1,11 +1,11 @@
-import InstituteHandler from "@handlers/institute";
-import { verifyAdmin, verifyBody, verifyParams, verifyToken } from "@server/middleware/verify";
-import Address from "@server/models/address";
-import Institute from "@server/models/institute";
-import Admin from "@server/models/user/admin";
-import IUser from "@types_/user";
-import IAdmin from "@types_/user/admin";
-import { getValue } from "@utils/object";
+import InstituteHandler from "../../handlers/institute";
+import { verifyAdmin, verifyBody, verifyParams, verifyToken } from "../../server/middleware/verify";
+import Address from "../../server/models/address";
+import Institute from "../../server/models/institute";
+import Admin from "../../server/models/user/admin";
+import IUser from "../../types_/user";
+import IAdmin from "../../types_/user/admin";
+import { getValue } from "../../utils/object";
 import { Router } from "express";
 
 const app = Router()

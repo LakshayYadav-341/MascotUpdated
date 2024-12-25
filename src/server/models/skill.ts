@@ -1,6 +1,6 @@
-import { ErrorHandler } from "@handlers/error";
-import ISkill from "@types_/skill";
-import { Models } from "@utils/models";
+import { ErrorHandler } from "../../handlers/error";
+import ISkill from "../../types_/skill";
+import { Models } from "../../utils/models";
 import { model, Schema } from "mongoose";
 
 const handler = new ErrorHandler<ISkill>(Models.skill)

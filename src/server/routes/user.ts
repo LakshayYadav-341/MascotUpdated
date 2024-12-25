@@ -1,27 +1,27 @@
-import UserHandler from "@handlers/user";
+import UserHandler from "../../handlers/user";
 import {
     verifyAdmin,
     verifyBody,
     verifyParams,
     verifyToken,
-} from "@server/middleware/verify";
-import Achievement from "@server/models/achievement";
-import Address from "@server/models/address";
-import Interaction from "@server/models/feed/interaction";
-import Post from "@server/models/feed/post";
-import Institute from "@server/models/institute";
-import User from "@server/models/user";
-import Admin from "@server/models/user/admin";
-import Connection from "@server/models/user/connection";
-import ConnectionRequest from "@server/models/user/connection-request";
-import Education from "@server/models/user/education";
-import Profile from "@server/models/user/profile";
-import IUser from "@types_/user";
-import IConnection from "@types_/user/connection";
-import IConnectionRequest from "@types_/user/connection-request";
-import ISession from "@types_/user/session";
-import { downloadFile } from "@utils/file";
-import { getValue } from "@utils/object";
+} from "../../server/middleware/verify";
+import Achievement from "../../server/models/achievement";
+import Address from "../../server/models/address";
+import Interaction from "../../server/models/feed/interaction";
+import Post from "../../server/models/feed/post";
+import Institute from "../../server/models/institute";
+import User from "../../server/models/user";
+import Admin from "../../server/models/user/admin";
+import Connection from "../../server/models/user/connection";
+import ConnectionRequest from "../../server/models/user/connection-request";
+import Education from "../../server/models/user/education";
+import Profile from "../../server/models/user/profile";
+import IUser from "../../types_/user";
+import IConnection from "../../types_/user/connection";
+import IConnectionRequest from "../../types_/user/connection-request";
+import ISession from "../../types_/user/session";
+import { downloadFile } from "../../utils/file";
+import { getValue } from "../../utils/object";
 import { Request, Response, Router } from "express";
 import Multer from "multer";
 
@@ -31,36 +31,39 @@ const multer = Multer();
 
 app.get("/all-users", verifyToken(), async (_, res) => {
     const { session } = res.locals;
-    // await kv.del(`suggestedUsers:${(session.user as IUser)._id}`);
+
+    // Fetch connection requests as plain objects
     const connectionRequests = await ConnectionRequest.find({
         $or: [
             { from: (session.user as IUser)._id },
             { to: (session.user as IUser)._id },
         ],
-    });
-    const connectionRequestUserIds = connectionRequests.reduce(
-        (userIds: string[], request: IConnectionRequest) => {
-            if (
-                request.from.toString() !==
-                (session.user as IUser)._id.toString()
-            ) {
+    }).lean<IConnectionRequest[]>(); // Ensure an array of IConnectionRequest
+
+    // Safely reduce connection requests to user IDs
+    const connectionRequestUserIds = connectionRequests.reduce<string[]>(
+        (userIds, request) => {
+            if (request.from.toString() !== (session.user as IUser)._id.toString()) {
                 userIds.push(request.from.toString());
             }
-            if (request.to.toString() !== (session.user as IUser)._id) {
+            if (request.to.toString() !== (session.user as IUser)._id.toString()) {
                 userIds.push(request.to.toString());
             }
             return userIds;
         },
         []
     );
+
+    // Fetch connections as plain objects
     const connections = await Connection.find({
         users: { $in: [(session.user as IUser)._id] },
-    });
-    const connectionUserIds = connections.reduce(
-        (userIds: string[], connection: IConnection) => {
+    }).lean<IConnection[]>(); // Ensure an array of IConnection
+
+    // Safely reduce connections to user IDs
+    const connectionUserIds = connections.reduce<string[]>(
+        (userIds, connection) => {
             const otherUser = connection.users.find(
-                (user) =>
-                    user.toString() !== (session.user as IUser)._id.toString()
+                (user) => user.toString() !== (session.user as IUser)._id.toString()
             );
             if (otherUser) {
                 userIds.push(otherUser.toString());
@@ -69,15 +72,21 @@ app.get("/all-users", verifyToken(), async (_, res) => {
         },
         []
     );
+
+    // Combine and deduplicate user IDs
     const allUserIds = Array.from(
         new Set([...connectionRequestUserIds, ...connectionUserIds])
     );
+
+    // Fetch all users excluding the current user and already connected users
     const allUsers = await User.find({
         _id: { $nin: [(session.user as IUser)._id, ...allUserIds] },
-    });
-    
+    }).lean<IUser[]>(); // Fetch all users as plain objects
+
     return res.status(200).send(handler.success(allUsers));
 });
+
+
 
 app.get("/details/:id", verifyToken(), verifyParams(["id"]), async (_, res) => {
     const { keys, values } = res.locals;

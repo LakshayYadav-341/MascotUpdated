@@ -1,5 +1,5 @@
-import IMongoDocument from "@types_/mongo";
-import IUser from "@types_/user";
+import IMongoDocument from "../../types_/mongo";
+import IUser from "../../types_/user";
 import IPost from "./post";
 
 export default interface IReportedPost extends IMongoDocument{

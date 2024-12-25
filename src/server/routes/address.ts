@@ -1,7 +1,7 @@
-import AddressHandler from "@handlers/address";
-import { verifyBody, verifyToken } from "@server/middleware/verify";
-import Address from "@server/models/address";
-import { getValue } from "@utils/object";
+import AddressHandler from "../../handlers/address";
+import { verifyBody, verifyToken } from "../../server/middleware/verify";
+import Address from "../../server/models/address";
+import { getValue } from "../../utils/object";
 import { Router } from "express";
 
 const app = Router()

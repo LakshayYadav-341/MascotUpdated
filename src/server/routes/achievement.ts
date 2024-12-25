@@ -1,11 +1,11 @@
-import AchievementHandler from "@handlers/achievement";
-import { verifyBody, verifyToken } from "@server/middleware/verify";
-import Achievement from "@server/models/achievement";
-import Profile from "@server/models/user/profile";
-import IUser from "@types_/user";
-import { downloadFile } from "@utils/file";
-import Hash from "@utils/hash";
-import { getValue } from "@utils/object";
+import AchievementHandler from "../../handlers/achievement";
+import { verifyBody, verifyToken } from "../../server/middleware/verify";
+import Achievement from "../../server/models/achievement";
+import Profile from "../../server/models/user/profile";
+import IUser from "../../types_/user";
+import { downloadFile } from "../../utils/file";
+import Hash from "../../utils/hash";
+import { getValue } from "../../utils/object";
 import { Router } from "express";
 import Multer from "multer";
 

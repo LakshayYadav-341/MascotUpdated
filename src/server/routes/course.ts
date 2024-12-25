@@ -1,7 +1,7 @@
-import CourseHandler from "@handlers/institute/course";
-import { verifyBody, verifyToken } from "@server/middleware/verify";
-import Course from "@server/models/institute/course";
-import { getValue } from "@utils/object";
+import CourseHandler from "../../handlers/institute/course";
+import { verifyBody, verifyToken } from "../../server/middleware/verify";
+import Course from "../../server/models/institute/course";
+import { getValue } from "../../utils/object";
 import { Router } from "express"
 
 const app = Router()

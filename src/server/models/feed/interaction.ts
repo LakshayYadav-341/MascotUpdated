@@ -1,6 +1,6 @@
-import InteractionHandler from "@handlers/feed/interaction"
-import IInteraction, { InteractionType } from "@types_/feed/interaction"
-import { Models } from "@utils/models"
+import InteractionHandler from "../../../handlers/feed/interaction"
+import IInteraction, { InteractionType } from "../../../types_/feed/interaction"
+import { Models } from "../../../utils/models"
 import { model, Schema } from "mongoose"
 
 const handler = new InteractionHandler()

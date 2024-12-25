@@ -1,7 +1,7 @@
-import { Time } from "@types_";
-import IMongoDocument from "@types_/mongo";
-import ISkill from "@types_/skill";
-import IUser from "@types_/user";
+import { Time } from "../../types_";
+import IMongoDocument from "../../types_/mongo";
+import ISkill from "../../types_/skill";
+import IUser from "../../types_/user";
 import ICompany from "./company";
 
 // job referral to be posted

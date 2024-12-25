@@ -1,6 +1,6 @@
-import PostHandler from "@handlers/feed/post";
-import IPost from "@types_/feed/post";
-import { Models } from "@utils/models";
+import PostHandler from "../../../handlers/feed/post";
+import IPost from "../../../types_/feed/post";
+import { Models } from "../../../utils/models";
 import { model, Schema } from "mongoose";
 
 const handler = new PostHandler()

@@ -1,8 +1,8 @@
-import JobHandler from "@handlers/job"
-import { verifyParams, verifyToken } from "@server/middleware/verify"
-import Job from "@server/models/job"
-import IUser from "@types_/user"
-import { getValue } from "@utils/object"
+import JobHandler from "../../handlers/job"
+import { verifyParams, verifyToken } from "../../server/middleware/verify"
+import Job from "../../server/models/job"
+import IUser from "../../types_/user"
+import { getValue } from "../../utils/object"
 import { Router } from "express"
 
 const app = Router()

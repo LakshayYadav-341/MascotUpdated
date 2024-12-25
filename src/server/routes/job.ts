@@ -1,9 +1,9 @@
-import JobHandler from "@handlers/job";
-import { verifyBody, verifyParams, verifyToken } from "@server/middleware/verify";
-import Job from "@server/models/job";
-import Company from "@server/models/job/company";
-import IUser from "@types_/user";
-import { getValue } from "@utils/object";
+import JobHandler from "../../handlers/job";
+import { verifyBody, verifyParams, verifyToken } from "../../server/middleware/verify";
+import Job from "../../server/models/job";
+import Company from "../../server/models/job/company";
+import IUser from "../../types_/user";
+import { getValue } from "../../utils/object";
 import { Router } from "express";
 
 const app = Router();

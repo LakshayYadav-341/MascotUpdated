@@ -1,7 +1,7 @@
-import IMongoDocument from "@types_/mongo";
+import IMongoDocument from "../../types_/mongo";
 import IUser from ".";
-import { Time } from "@types_";
-import IInstitute from "@types_/institute";
+import { Time } from "../../types_";
+import IInstitute from "../../types_/institute";
 
 export enum ConnectionTypes {
     mutual = "Mutual",

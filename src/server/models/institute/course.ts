@@ -1,6 +1,6 @@
-import CourseHandler from "@handlers/institute/course";
-import ICourse from "@types_/institute/course";
-import { Models } from "@utils/models";
+import CourseHandler from "../../../handlers/institute/course";
+import ICourse from "../../../types_/institute/course";
+import { Models } from "../../../utils/models";
 import { model, Schema } from "mongoose";
 
 const handler = new CourseHandler()

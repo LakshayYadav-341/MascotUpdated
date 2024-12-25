@@ -1,6 +1,6 @@
-import IChat from "@types_/chat";
+import IChat from "../../../types_/chat";
 import { model, Schema } from "mongoose";
-import { Models } from "@utils/models";
+import { Models } from "../../../utils/models";
 
 const chatSchema = new Schema<IChat>({
     name: String,

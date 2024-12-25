@@ -1,10 +1,10 @@
-import { verifyBody, verifyParams, verifyToken } from "@server/middleware/verify";
-import IUser from "@types_/user";
-import { getValue } from "@utils/object";
+import { verifyBody, verifyParams, verifyToken } from "../../server/middleware/verify";
+import IUser from "../../types_/user";
+import { getValue } from "../../utils/object";
 import { Router } from "express";
-import Chat from "@server/models/chat";
-import ChatHandler from "@handlers/chat";
-import User from "@server/models/user";
+import Chat from "../../server/models/chat";
+import ChatHandler from "../../handlers/chat";
+import User from "../../server/models/user";
 
 const app = Router();
 
@@ -71,6 +71,8 @@ app.post("/", verifyToken(), verifyBody(required), async(_, res)=>{
 
 app.get("/find", verifyToken(), async(_, res)=>{
     const {session} = res.locals;
+    console.log(session);
+    
     const userId = (session.user as IUser)._id;
     const chat = await Chat.find({members: {$in: userId}}).populate([
         { path: "members" },

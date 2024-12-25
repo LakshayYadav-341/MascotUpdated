@@ -1,7 +1,7 @@
-import CompanyHandler from "@handlers/job/company"
-import { verifyBody, verifyToken } from "@server/middleware/verify"
-import Company from "@server/models/job/company"
-import { getValue } from "@utils/object"
+import CompanyHandler from "../../handlers/job/company"
+import { verifyBody, verifyToken } from "../../server/middleware/verify"
+import Company from "../../server/models/job/company"
+import { getValue } from "../../utils/object"
 import { Router } from "express"
 
 const app = Router()

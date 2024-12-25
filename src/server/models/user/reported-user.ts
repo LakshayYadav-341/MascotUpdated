@@ -1,7 +1,7 @@
-import IReportedUser from "@types_/user/reported-user"
-import { Models } from "@utils/models"
+import IReportedUser from "../../../types_/user/reported-user"
+import { Models } from "../../../utils/models"
 import { model, Schema } from "mongoose"
-import ReportedUserHandler from "@handlers/user/reported-user"
+import ReportedUserHandler from "../../../handlers/user/reported-user"
 
 const handler = new ReportedUserHandler()
 

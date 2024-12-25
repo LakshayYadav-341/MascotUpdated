@@ -1,6 +1,6 @@
-import WorkHandler from "@handlers/job/work";
-import IWork from "@types_/job/work";
-import { Models } from "@utils/models";
+import WorkHandler from "../../../handlers/job/work";
+import IWork from "../../../types_/job/work";
+import { Models } from "../../../utils/models";
 import { Schema, model } from "mongoose";
 
 const handler = new WorkHandler()

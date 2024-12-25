@@ -1,9 +1,9 @@
-import { ErrorHandler } from "@handlers/error"
-import { JWT_SECRET } from "@server/config"
-import Session from "@server/models/user/session"
-import IUser from "@types_/user"
-import { Payload } from "@types_/user/session"
-import { getKeys, getValue, getValues } from "@utils/object"
+import { ErrorHandler } from "../../handlers/error"
+import { JWT_SECRET } from "../../server/config"
+import Session from "../../server/models/user/session"
+import IUser from "../../types_/user"
+import { Payload } from "../../types_/user/session"
+import { getKeys, getValue, getValues } from "../../utils/object"
 import { NextFunction, Request, Response } from "express"
 import jwt from "jsonwebtoken"
 
@@ -11,6 +11,8 @@ export const verifyBody = (
     required: string[], 
     handler: ErrorHandler<any> = new ErrorHandler<any>("request")
 ) => (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.body);
+    
     const body = req.body
     const keys = getKeys(body)
     const values = getValues(body)

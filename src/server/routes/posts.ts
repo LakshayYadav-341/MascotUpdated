@@ -1,7 +1,7 @@
-import PostHandler from "@handlers/feed/post";
-import { verifyParams, verifyToken } from "@server/middleware/verify";
-import Post from "@server/models/feed/post";
-import { getValue } from "@utils/object";
+import PostHandler from "../../handlers/feed/post";
+import { verifyParams, verifyToken } from "../../server/middleware/verify";
+import Post from "../../server/models/feed/post";
+import { getValue } from "../../utils/object";
 import { Router } from "express";
 
 const app = Router()

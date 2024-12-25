@@ -1,9 +1,9 @@
-import { verifyBody, verifyParams, verifyToken } from "@server/middleware/verify";
-import IUser from "@types_/user";
-import { getValue } from "@utils/object";
+import { verifyBody, verifyParams, verifyToken } from "../../server/middleware/verify";
+import IUser from "../../types_/user";
+import { getValue } from "../../utils/object";
 import { Router } from "express";
-import Message from "@server/models/chat/message";
-import MessageHandler from "@handlers/chat/message";
+import Message from "../../server/models/chat/message";
+import MessageHandler from "../../handlers/chat/message";
 
 const app = Router();
 

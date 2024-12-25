@@ -1,6 +1,6 @@
-import EducationHandler from "@handlers/user/education";
-import IEducation, { EducationTypes } from "@types_/user/education";
-import { Models } from "@utils/models";
+import EducationHandler from "../../../handlers/user/education";
+import IEducation, { EducationTypes } from "../../../types_/user/education";
+import { Models } from "../../../utils/models";
 import { Schema, model } from "mongoose";
 
 const handler = new EducationHandler()

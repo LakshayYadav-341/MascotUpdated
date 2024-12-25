@@ -1,5 +1,5 @@
-import { Time } from "@types_";
-import IMongoDocument from "@types_/mongo";
+import { Time } from "../../types_";
+import IMongoDocument from "../../types_/mongo";
 
 export default interface INews extends IMongoDocument {
     title: string

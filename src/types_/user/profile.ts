@@ -1,9 +1,9 @@
-import IAchievement from "@types_/achievement";
-import IMongoDocument from "@types_/mongo";
-import ISkill from "@types_/skill";
+import IAchievement from "../../types_/achievement";
+import IMongoDocument from "../../types_/mongo";
+import ISkill from "../../types_/skill";
 import IEducation from "./education";
-import IAddress from "@types_/address";
-import IWork from "@types_/job/work";
+import IAddress from "../../types_/address";
+import IWork from "../../types_/job/work";
 
 export default interface IProfile extends IMongoDocument {
     education: (IMongoDocument["_id"]|IEducation)[]

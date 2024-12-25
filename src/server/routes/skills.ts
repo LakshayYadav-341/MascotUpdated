@@ -1,5 +1,5 @@
-import SkillHandler from "@handlers/skill";
-import Skill from "@server/models/skill";
+import SkillHandler from "../../handlers/skill";
+import Skill from "../../server/models/skill";
 import { Router } from "express";
 
 const app = Router();

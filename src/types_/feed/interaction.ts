@@ -1,7 +1,7 @@
-import IMongoDocument from "@types_/mongo";
+import IMongoDocument from "../../types_/mongo";
 import IPost from "./post";
-import IUser from "@types_/user";
-import { Time } from "@types_";
+import IUser from "../../types_/user";
+import { Time } from "../../types_";
 
 export enum InteractionType {
     like = "like",

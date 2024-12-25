@@ -1,6 +1,6 @@
-import IMessage from "@types_/chat/message";
+import IMessage from "../../../types_/chat/message";
 import { model, Schema } from "mongoose";
-import { Models } from "@utils/models";
+import { Models } from "../../../utils/models";
 
 const MessageSchema = new Schema<IMessage>({
     chat: {

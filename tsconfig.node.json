@@ -18,12 +18,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "rootDir": "src/"
+    "rootDir": "src"
   },
   "include": [
     "vite.config.mts",
-    "config.ts", 
-    "src", 
+    "config.ts",
+    "src",
     "globals.d.ts"
-  ],
+  ]
 }

@@ -1,7 +1,7 @@
-import InstituteHandler from "@handlers/institute";
-import { verifyParams, verifyToken } from "@server/middleware/verify";
-import Institute from "@server/models/institute";
-import { getValue } from "@utils/object";
+import InstituteHandler from "../../handlers/institute";
+import { verifyParams, verifyToken } from "../../server/middleware/verify";
+import Institute from "../../server/models/institute";
+import { getValue } from "../../utils/object";
 import { Router } from "express";
 
 const app = Router();

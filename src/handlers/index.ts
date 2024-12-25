@@ -1,4 +1,4 @@
-import { ResponseStatus, ResponseType } from "@types_/response";
+import { ResponseStatus, ResponseType } from "../types_/response";
 
 export default class ResponseHandler {
     static success = (data: ResponseType) => ({ 

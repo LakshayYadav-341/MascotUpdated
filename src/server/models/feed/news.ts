@@ -1,6 +1,6 @@
-import NewsHandler from "@handlers/feed/news";
-import INews from "@types_/feed/news";
-import { Models } from "@utils/models";
+import NewsHandler from "../../../handlers/feed/news";
+import INews from "../../../types_/feed/news";
+import { Models } from "../../../utils/models";
 import { model, Schema } from "mongoose";
 
 const handler = new NewsHandler()

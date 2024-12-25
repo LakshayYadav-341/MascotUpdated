@@ -1,6 +1,6 @@
-import SessionHandler from "@handlers/user/session";
-import ISession from "@types_/user/session";
-import { Models } from "@utils/models";
+import SessionHandler from "../../../handlers/user/session";
+import ISession from "../../../types_/user/session";
+import { Models } from "../../../utils/models";
 import { Schema, model } from "mongoose";
 
 const handler = new SessionHandler()

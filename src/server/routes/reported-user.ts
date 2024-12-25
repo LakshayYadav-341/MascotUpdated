@@ -1,9 +1,9 @@
-import ReportedUserHandler from "@handlers/user/reported-user";
-import { verifyBody, verifyToken, verifyParams, verifyAdmin } from "@server/middleware/verify";
-import ReportedUser from "@server/models/user/reported-user";
-import IUser from "@types_/user";
+import ReportedUserHandler from "../../handlers/user/reported-user";
+import { verifyBody, verifyToken, verifyParams, verifyAdmin } from "../../server/middleware/verify";
+import ReportedUser from "../../server/models/user/reported-user";
+import IUser from "../../types_/user";
 import { Router } from "express";
-import { getValue } from "@utils/object";
+import { getValue } from "../../utils/object";
 
 const app = Router();
 

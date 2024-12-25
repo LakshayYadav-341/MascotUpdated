@@ -1,5 +1,5 @@
-import IConnection from "@types_/user/connection"
-import { Models } from "@utils/models"
+import IConnection from "../../../types_/user/connection"
+import { Models } from "../../../utils/models"
 import { model, Schema } from "mongoose"
 
 // const handler = new ConnectionHandler()

@@ -1,8 +1,8 @@
-import IAddress from "@types_/address"
-import IMongoDocument from "@types_/mongo"
-import IUser from "@types_/user"
+import IAddress from "../../types_/address"
+import IMongoDocument from "../../types_/mongo"
+import IUser from "../../types_/user"
 import ICourse from "./course"
-import IAchievement from "@types_/achievement"
+import IAchievement from "../../types_/achievement"
 
 
 export default interface IInstitute extends IMongoDocument {

@@ -1,7 +1,7 @@
-import IAddress from "@types_/address";
-import { Models } from "@utils/models";
+import IAddress from "../../types_/address";
+import { Models } from "../../utils/models";
 import { model, Schema } from "mongoose";
-import AddressHandler from "@handlers/address";
+import AddressHandler from "../../handlers/address";
 
 const handler = new AddressHandler()
 

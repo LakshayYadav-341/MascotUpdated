@@ -1,11 +1,11 @@
-import UserHandler from '@handlers/user';
-import { verifyAdmin, verifyParams, verifyToken } from '@server/middleware/verify';
-import Education from '@server/models/user/education';
-import User from '@server/models/user/index';
-import Profile from '@server/models/user/profile';
-import IUser from '@types_/user';
-import IAdmin from '@types_/user/admin';
-import { getValue } from '@utils/object';
+import UserHandler from '../../handlers/user';
+import { verifyAdmin, verifyParams, verifyToken } from '../../server/middleware/verify';
+import Education from '../../server/models/user/education';
+import User from '../../server/models/user/index';
+import Profile from '../../server/models/user/profile';
+import IUser from '../../types_/user';
+import IAdmin from '../../types_/user/admin';
+import { getValue } from '../../utils/object';
 import { Router } from 'express';
 
 const app = Router();

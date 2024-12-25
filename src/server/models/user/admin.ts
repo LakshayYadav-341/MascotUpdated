@@ -1,6 +1,6 @@
-import AdminHandler from "@handlers/user/admin"
-import IAdmin from "@types_/user/admin"
-import { Models } from "@utils/models"
+import AdminHandler from "../../../handlers/user/admin"
+import IAdmin from "../../../types_/user/admin"
+import { Models } from "../../../utils/models"
 import { model, Schema } from "mongoose"
 
 const handler = new AdminHandler()

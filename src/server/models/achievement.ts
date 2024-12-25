@@ -1,7 +1,7 @@
-import IAchievement from "@types_/achievement"
+import IAchievement from "../../types_/achievement"
 import { model, Schema } from "mongoose"
-import AchievementHandler from "@handlers/achievement"
-import { Models } from "@utils/models"
+import AchievementHandler from "../../handlers/achievement"
+import { Models } from "../../utils/models"
 
 const handler = new AchievementHandler()
 

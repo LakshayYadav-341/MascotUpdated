@@ -1,11 +1,11 @@
-import AdminHandler from "@handlers/user/admin";
-import { verifyAdmin, verifyParams, verifyToken } from "@server/middleware/verify";
-import Institute from "@server/models/institute";
-import User from "@server/models/user";
-import ConnectionRequest from "@server/models/user/connection-request";
-import IUser, { ProfileRoles } from "@types_/user";
-import { ConnectionTypes } from "@types_/user/connection-request";
-import { getValue } from "@utils/object";
+import AdminHandler from "../../handlers/user/admin";
+import { verifyAdmin, verifyParams, verifyToken } from "../../server/middleware/verify";
+import Institute from "../../server/models/institute";
+import User from "../../server/models/user";
+import ConnectionRequest from "../../server/models/user/connection-request";
+import IUser, { ProfileRoles } from "../../types_/user";
+import { ConnectionTypes } from "../../types_/user/connection-request";
+import { getValue } from "../../utils/object";
 import { Router } from "express";
 
 const app = Router()

@@ -1,6 +1,6 @@
-import InstituteHandler from "@handlers/institute";
-import IInstitute from "@types_/institute";
-import { Models } from "@utils/models";
+import InstituteHandler from "../../../handlers/institute";
+import IInstitute from "../../../types_/institute";
+import { Models } from "../../../utils/models";
 import { model, Schema } from "mongoose";
 
 const handler = new InstituteHandler()

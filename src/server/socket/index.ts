@@ -2,13 +2,13 @@ import cookie from "cookie";
 import jwt from "jsonwebtoken";
 import { Server, Socket } from "socket.io";
 import { ChatEvent } from "./utils";
-import { ErrorHandler } from "@handlers/error";
-import { JWT_SECRET } from "@server/config";
-import { Payload } from "@types_/user/session";
-import Session from "@server/models/user/session";
-import IUser from "@types_/user";
+import { ErrorHandler } from "../../handlers/error";
+import { JWT_SECRET } from "../../server/config";
+import { Payload } from "../../types_/user/session";
+import Session from "../../server/models/user/session";
+import IUser from "../../types_/user";
 import { Request } from "express";
-import logger from "@server/logger/winston";
+import logger from "../../server/logger/winston";
 
 const handler = new ErrorHandler("socket")
 

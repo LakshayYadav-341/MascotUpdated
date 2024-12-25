@@ -1,6 +1,6 @@
-import CompanyHandler from "@handlers/job/company";
-import ICompany from "@types_/job/company";
-import { Models } from "@utils/models";
+import CompanyHandler from "../../../handlers/job/company";
+import ICompany from "../../../types_/job/company";
+import { Models } from "../../../utils/models";
 import { model, Schema } from "mongoose";
 
 const handler = new CompanyHandler()

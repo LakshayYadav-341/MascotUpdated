@@ -1,6 +1,6 @@
-import CompanyHandler from "@handlers/job/company";
-import { verifyToken } from "@server/middleware/verify";
-import Company from "@server/models/job/company";
+import CompanyHandler from "../../handlers/job/company";
+import { verifyToken } from "../../server/middleware/verify";
+import Company from "../../server/models/job/company";
 import { Router } from "express";
 
 const app = Router();

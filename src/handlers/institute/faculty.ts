@@ -1,7 +1,7 @@
-import { ErrorHandler } from "@handlers/error";
-import IFaculty from "@types_/institute/faculty";
-import { Models } from "@utils/models";
-import Validator from "@types_/validator";
+import { ErrorHandler } from "../../handlers/error";
+import IFaculty from "../../types_/institute/faculty";
+import { Models } from "../../utils/models";
+import Validator from "../../types_/validator";
 
 export default class FacultyHandler extends ErrorHandler<IFaculty> {
     

@@ -1,7 +1,7 @@
-import InteractionHandler from "@handlers/feed/interaction";
-import { verifyBody, verifyParams, verifyToken } from "@server/middleware/verify";
-import Interaction from "@server/models/feed/interaction";
-import { getValue } from "@utils/object";
+import InteractionHandler from "../../handlers/feed/interaction";
+import { verifyBody, verifyParams, verifyToken } from "../../server/middleware/verify";
+import Interaction from "../../server/models/feed/interaction";
+import { getValue } from "../../utils/object";
 import { Router } from "express";
 
 const app = Router();

@@ -1,10 +1,10 @@
-import JobApplicationHandler from "@handlers/job/application";
-import { verifyBody, verifyToken } from "@server/middleware/verify";
-import JobApplication from "@server/models/job/application";
-import IUser from "@types_/user";
-import { downloadFile } from "@utils/file";
-import Hash from "@utils/hash";
-import { getValue } from "@utils/object";
+import JobApplicationHandler from "../../handlers/job/application";
+import { verifyBody, verifyToken } from "../../server/middleware/verify";
+import JobApplication from "../../server/models/job/application";
+import IUser from "../../types_/user";
+import { downloadFile } from "../../utils/file";
+import Hash from "../../utils/hash";
+import { getValue } from "../../utils/object";
 import { Router } from "express";
 import Multer from "multer"
 

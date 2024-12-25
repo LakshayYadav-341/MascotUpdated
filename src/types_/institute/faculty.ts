@@ -1,7 +1,7 @@
-import IMongoDocument from "@types_/mongo";
+import IMongoDocument from "../../types_/mongo";
 import IInstitute from ".";
-import { Time } from "@types_";
-import IAchievement from "@types_/achievement";
+import { Time } from "../../types_";
+import IAchievement from "../../types_/achievement";
 
 export default interface IFaculty extends IMongoDocument {
     name: string

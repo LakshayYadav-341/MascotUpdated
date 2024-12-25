@@ -1,12 +1,12 @@
-import PostHandler from "@handlers/feed/post";
-import { verifyBody, verifyParams, verifyToken } from "@server/middleware/verify";
-import Interaction from "@server/models/feed/interaction";
-import Post from "@server/models/feed/post";
-import { InteractionType } from "@types_/feed/interaction";
-import IUser from "@types_/user";
-import { downloadFile } from "@utils/file";
-import Hash from "@utils/hash";
-import { getKeys, getValue, getValues } from "@utils/object";
+import PostHandler from "../../handlers/feed/post";
+import { verifyBody, verifyParams, verifyToken } from "../../server/middleware/verify";
+import Interaction from "../../server/models/feed/interaction";
+import Post from "../../server/models/feed/post";
+import { InteractionType } from "../../types_/feed/interaction";
+import IUser from "../../types_/user";
+import { downloadFile } from "../../utils/file";
+import Hash from "../../utils/hash";
+import { getKeys, getValue, getValues } from "../../utils/object";
 import { Router } from "express";
 import Multer from "multer";
 

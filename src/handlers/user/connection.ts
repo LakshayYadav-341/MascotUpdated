@@ -1,6 +1,6 @@
-import { ErrorHandler } from "@handlers/error";
-import IConnection from "@types_/user/connection";
-import { Models } from "@utils/models";
+import { ErrorHandler } from "../../handlers/error";
+import IConnection from "../../types_/user/connection";
+import { Models } from "../../utils/models";
 
 export default class ConnectionHandler extends ErrorHandler<IConnection> {
     constructor() {

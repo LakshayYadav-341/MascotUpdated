@@ -1,7 +1,7 @@
-import SkillHandler from "@handlers/skill";
-import { verifyBody, verifyParams, verifyToken } from "@server/middleware/verify";
-import Skill from "@server/models/skill";
-import { getValue } from "@utils/object";
+import SkillHandler from "../../handlers/skill";
+import { verifyBody, verifyParams, verifyToken } from "../../server/middleware/verify";
+import Skill from "../../server/models/skill";
+import { getValue } from "../../utils/object";
 import { Router } from "express";
 
 const app = Router();

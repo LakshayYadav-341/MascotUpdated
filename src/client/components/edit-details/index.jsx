@@ -19,7 +19,7 @@ const GetUserDetails = () => {
   const { data: updatedUser, trigger: updateUser } = usePutter(basePath + urls.user.update)
   const { data: updatedAddress, trigger: updateAddress } = usePutter(basePath + urls.user.address.update)
   const { data: addressData, mutate: addressMutate } = useGetter(basePath + urls.user.address.get)
-  const { data: loggedInUser, mutate: loggedInUserMutate } = useGetter(basePath + urls.user.profile.get.replace(':id', session?.user?._id))
+  const { data: loggedInUser, mutate: loggedInUserMutate } = useGetter(basePath + urls.user.profile.get.replace(':id', session?.user))
 
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -32,7 +32,7 @@ const GetUserDetails = () => {
   const formatDate = (inputDate) => {
     const date = new Date(inputDate);
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
     return `${year}-${month}-${day}`;
   };

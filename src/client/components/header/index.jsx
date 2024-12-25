@@ -144,7 +144,7 @@ export default function PrimarySearchAppBar() {
   }, []);
 
   const userNavigation = [
-    { name: "My Profile", link: `/profile/${user?._id}` },
+    { name: "My Profile", link: `/profile/${user}` },
     { name: "Sign out", link: "/logout" },
   ];
 

@@ -17,7 +17,6 @@ export async function checkUser(loginInfo) {
   return new Promise(async (resolve, reject) => {
     const email = loginInfo.email;
     const password = loginInfo.password;
-    console.log(password)
 
     try {
       const res = await axios.post(basePath + urls.auth.login, {

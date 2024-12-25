@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { serverPath } from "../../../utils/urls";
 import { selectLoggedInUser, selectSession } from '../auth/authSlice';
+import { selectUserInfo } from "../auth/user/userSlice";
 import Footer from '../footer';
 import Loading from "../loading";
 import PostCard from "../posts/PostCard";
@@ -18,12 +19,13 @@ const HomeComponent = ({ role, user, connection, users, posts }) => {
     const session = useSelector(selectSession);
     const suggestUrl = basePath + urls.user.suggestedUser.get
     const newsGetUrl = basePath + urls.news.find
-    const connectionsUrl = basePath + urls.connections.getByUser.replace(":user", session?.user._id)
+    const connectionsUrl = basePath + urls.connections.getByUser.replace(":user", session?.user)
 
     const [tempPosts, setTempPosts] = useState([])
     const [isPostChanged, setIsPostChanged] = useState(false)
     const [isLoading, setIsLoading] = useState(true);
-    const tempUser = useSelector(selectLoggedInUser);
+    const profileUrl = basePath + urls.user.profile.get.replace(':id', session?.user)
+    const { data: tempUser, mutate: tempUserMutate,} = useGetter(profileUrl)
     const { data: newsData, mutate: newsMutate, isLoading: newsLoading } = useGetter(newsGetUrl)
     const { data: connectedUser, mutate: connectionMutate, isLoading: connectionIsLoading } = useGetter(connectionsUrl)
 
@@ -62,11 +64,11 @@ const HomeComponent = ({ role, user, connection, users, posts }) => {
                         <div className="card profileCard">
                             <div className="cover"></div>
                             <div className="profileInfo">
-                                <img src={tempUser?.profilePhoto ? serverPath + tempUser?.profilePhoto : profile} alt="profileImg" className="profileImg" />
+                                <img src={tempUser?.data?.profilePhoto ? serverPath + tempUser?.data?.profilePhoto : profile} alt="profileImg" className="profileImg" />
                                 <strong className="userName">
-                                    {tempUser?.name.first} {tempUser?.name.last} <span style={{ textTransform: 'capitalize' }}>({Object.keys(tempUser).includes("admin") ? "Admin" :tempUser?.role})</span>
+                                    {tempUser?.data?.name?.first} {tempUser?.data?.name?.last} <span style={{ textTransform: 'capitalize' }}>({Object.keys(tempUser?.data).includes("admin") ? "Admin" : tempUser?.data?.role})</span>
                                 </strong>
-                                <small className="userProfession">{tempUser?.bio || ""}</small>
+                                <small className="userProfession">{tempUser?.data?.bio || ""}</small>
                                 {/* <span>{user.institute}</span> */}
                             </div>
                             <div className="connection">
@@ -74,7 +76,7 @@ const HomeComponent = ({ role, user, connection, users, posts }) => {
                                 <small>Connections</small>
                             </div>
                             <div className="specialLink">
-                                <Link to={`/profile/${tempUser?._id}`}>My Profile</Link>
+                                <Link to={`/profile/${tempUser?.data?._id}`}>My Profile</Link>
                             </div>
                         </div>
 
@@ -121,7 +123,7 @@ const HomeComponent = ({ role, user, connection, users, posts }) => {
                                             <div className="row">
                                                 <div className="col">
                                                     <h5 style={{ color: 'white' }}>{eachNews.title}</h5>
-                                                    <span style={{ flex: 1, color: "gray", fontSize:"0.9rem" }}>
+                                                    <span style={{ flex: 1, color: "gray", fontSize: "0.9rem" }}>
                                                         {eachNews.description}
                                                     </span>
                                                 </div>

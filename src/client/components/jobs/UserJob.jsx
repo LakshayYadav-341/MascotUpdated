@@ -92,7 +92,7 @@ export default function UserJob() {
                                     <div className="posted-time">Apply Before: {formatDate(job.endsAt)}</div>
                                 </div>
                                 {
-                                    session?.user?._id === params.id && <IconButton sx={{ position: "absolute", bottom: "0.5rem", right: "1rem" }} color="primary" aria-label="add to shopping cart" onClick={() => { deleteHandler(job?._id) }}>
+                                    session?.user === params.id && <IconButton sx={{ position: "absolute", bottom: "0.5rem", right: "1rem" }} color="primary" aria-label="add to shopping cart" onClick={() => { deleteHandler(job?._id) }}>
                                         <DeleteIcon sx={{ color: "#E74C3C", fontSize: "2rem" }} />
                                     </IconButton>
                                 }

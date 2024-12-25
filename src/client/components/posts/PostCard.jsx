@@ -270,7 +270,7 @@ const PostCard = (props) => {
             <i
               className={`fa-${likeInteract
                 .map((like) => like?.user._id)
-                .includes(session?.user._id)
+                .includes(session?.user)
                 ? "solid"
                 : "regular"
                 } fa-thumbs-up`}

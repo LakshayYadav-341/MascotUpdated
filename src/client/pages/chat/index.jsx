@@ -48,105 +48,106 @@ const Chat = () => {
             setIsChatChanged(!isChatChanged)
             setLoading(true)
           }
+        } 
+      }
+        catch (error) {
+          console.error("Error fetching chat:", error.message);
         }
-      }
-      catch (error) {
-        console.log(error);
-      }
-    }
-    if (userId !== null) getChat();
-  }, [userId])
+      };
 
-  // Get the chat in chat section
+      if (userId) getChat();
+    }, [userId, session.token]);
+
+  // Fetch all chats for the user
   useEffect(() => {
     const getChats = async () => {
       try {
+        setLoading(true);
         const { data } = await axios.get(basePath + urls.chat.userChat, {
-          headers: {
-            authorization: `Bearer ${session.token}`
-          }
+          headers: { authorization: `Bearer ${session.token}` },
         });
-        setChats(data.data);
+        setChats(data.data || []);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching chats:", error.message);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     };
-    getChats();
-  }, [user._id, isChatChanged]);
 
-  // Connect to Socket.io
+    getChats();
+  }, [user, isChatChanged]);
+
+  // Socket setup and user connection
   useEffect(() => {
     socket.current = io(socketServerPath);
-    socket.current.emit("new-user-add", user._id);
-    socket.current.on("get-users", (users) => {
-      setOnlineUsers(users);
-    });
+
+    socket.current.emit("new-user-add", user);
+    socket.current.on("get-users", (users) => setOnlineUsers(users));
+
+    // Cleanup socket listeners on unmount
+    return () => {
+      socket.current.disconnect();
+    };
   }, [user]);
 
-  // Send Message to socket server
+  // Send message via socket
   useEffect(() => {
-    if (sendMessage !== null) {
+    if (sendMessage) {
       socket.current.emit("send-message", sendMessage);
     }
   }, [sendMessage]);
 
-
-  // Get the message from socket server
+  // Receive messages from socket
   useEffect(() => {
-    socket.current.on("recieve-message", (data) => {
-      console.log(data)
+    const handleReceiveMessage = (data) => {
       setReceivedMessage(data);
-    }
+    };
 
-    );
+    socket.current.on("recieve-message", handleReceiveMessage);
+
+    // Cleanup listener on unmount
+    return () => {
+      socket.current.off("recieve-message", handleReceiveMessage);
+    };
   }, []);
 
-
+  // Check if a chat member is online
   const checkOnlineStatus = (chat) => {
-    const chatMember = chat.members.find((member) => member._id !== user._id);
-    const online = onlineUsers.find((onUser) => onUser.userId === chatMember._id);
-    return online ? true : false;
+    const chatMember = chat?.members?.find((member) => member._id !== user);
+    return onlineUsers.some((onUser) => onUser.userId === chatMember?._id);
   };
 
   return (
     <div className="Chat" style={{ marginTop: "5rem" }}>
       {/* Left Side */}
       <div className="Left-side-chat">
-        {/* <LogoSearch /> */}
         <div className="Chat-container">
           <h2>Chats</h2>
           <div className="Chat-list">
-            {loading ? <Loading /> : chats.length > 0 ? chats.map((chat, id) => (
-              <div
-                key={id}
-                onClick={() => {
-                  setCurrentChat(chat);
-                }}
-              >
-                <Conversation
-                  data={chat}
-                  currentUser={user._id}
-                  online={checkOnlineStatus(chat)}
-                />
-              </div>
-            )) : <span>
-              No chats found!!
-            </span>}
+            {loading ? (
+              <Loading />
+            ) : chats.length > 0 ? (
+              chats.map((chat, id) => (
+                <div key={id} onClick={() => setCurrentChat(chat)}>
+                  <Conversation
+                    data={chat}
+                    currentUser={user}
+                    online={checkOnlineStatus(chat)}
+                  />
+                </div>
+              ))
+            ) : (
+              <span>No chats found!</span>
+            )}
           </div>
         </div>
       </div>
 
       {/* Right Side */}
-
       <div className="Right-side-chat">
-        {/* <div style={{ width: "20rem", alignSelf: "flex-end" }}>
-          <NavIcons />
-        </div> */}
         <ChatBox
           chat={currentChat}
-          currentUser={user._id}
+          currentUser={user}
           setSendMessage={setSendMessage}
           receivedMessage={receivedMessage}
         />

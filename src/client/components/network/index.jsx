@@ -13,7 +13,7 @@ import axios from "axios";
 const NetworkComponent = () => {
   const session = useSelector(selectSession);
   const connectionsUrl =
-    basePath + urls.connections.getByUser.replace(":user", session?.user._id);
+    basePath + urls.connections.getByUser.replace(":user", session?.user);
   const suggestUrl = basePath + urls.user.suggestedUser.get;
   const requestUrl = basePath + urls.request.from;
   const {

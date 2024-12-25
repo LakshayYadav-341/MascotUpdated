@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import Button from '@mui/material/Button';
 import { useSelector } from 'react-redux';
@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 
 const ConnectionType = (props) => {
     const session = useSelector(selectSession)
-    const connectionsUrl = basePath + urls.connections.getByUser.replace(":user", session?.user._id)
+    const connectionsUrl = basePath + urls.connections.getByUser.replace(":user", session?.user)
     const suggestUrl = basePath + urls.user.suggestedUser.get
     const requestUrl = basePath + urls.request.from
     const { data: connectedUser, mutate: connectionMutate, isLoading: connectionIsLoading } = useGetter(connectionsUrl)
@@ -21,17 +21,19 @@ const ConnectionType = (props) => {
     const [isSuggestion, setIsSuggestion] = useState(false);
     const [hasRequested, setHasRequested] = useState(false);
     const [request, setRequest] = useState({});
-    useEffect(()=>{
+    useEffect(() => {
         let flag1 = false;
-        connectedUser?.data.forEach(eachUser => {
-            if(eachUser?.users[0]._id === props.userId){
-                flag1 = true;
-            }
-        })
+        if (connectedUser && connectedUser.data.status !== "error") {
+            connectedUser?.data?.forEach(eachUser => {
+                if (eachUser?.users[0]._id === props.userId) {
+                    flag1 = true;
+                }
+            })
+        }
         setIsFriend(flag1)
         let flag2 = false;
         suggestedUser?.data.forEach(eachUser => {
-            if(eachUser?._id === props.userId){
+            if (eachUser?._id === props.userId) {
                 flag2 = true;
             }
         })
@@ -39,7 +41,7 @@ const ConnectionType = (props) => {
         let req = {};
         let flag3 = false;
         connectionRequests?.data.forEach(cr => {
-            if(cr?.from._id === props.userId){
+            if (cr?.from._id === props.userId) {
                 req = cr
                 flag3 = true
             }
@@ -54,10 +56,10 @@ const ConnectionType = (props) => {
                 authorization: `Bearer ${session.token}`,
             }
         })
-        if(res?.status === 200){
+        if (res?.status === 200) {
             toast.success("Request accepted Successfully")
         }
-        else{
+        else {
             toast.error("Something went wrong!!")
         }
         connectionMutate()
@@ -74,15 +76,15 @@ const ConnectionType = (props) => {
                 "Content-Type": 'multipart/form-data',
             }
         })
-        if(res?.status === 200){
+        if (res?.status === 200) {
             toast.success("Sent Request Successfully")
         }
-        else{
+        else {
             toast.error("Something went wrong!!")
         }
         suggestMutate()
     }
-  return (
+    return (
         <>
             {isSuggestion && !isFriend && !hasRequested && <Button variant="contained" endIcon={<PersonAddIcon />} onClick={clickHandler} >
                 Connect
@@ -97,7 +99,7 @@ const ConnectionType = (props) => {
                 Connection Sent
             </Button>}
         </>
-  )
+    )
 }
 
 export default ConnectionType

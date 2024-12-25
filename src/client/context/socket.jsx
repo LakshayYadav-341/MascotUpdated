@@ -2,9 +2,8 @@ import { createContext, useEffect, useState, useContext } from "react"
 import { useSelector } from "react-redux"
 import socket from "socket.io-client"
 import { selectSession } from "@client/components/auth/authSlice"
-
 const getSocket = (token) => {
-    return socket(import.meta.env.VITE_SOCKET_SERVER, {
+    return socket("https://mascotbackend.onrender.com", {
         withCredentials: true,
         auth: { token }
     })

@@ -127,7 +127,7 @@ export const authSlice = createSlice({
   },
 });
 
-export const selectLoggedInUser = (state) => state.auth.updatedLoggedInUser || state.auth.loggedInUser?.user;
+export const selectLoggedInUser = (state) => state.auth.loggedInUser?.user;
 export const selectSession = (state) => state.auth.loggedInUser;
 export const selectCreatedUser = (state) => state.auth.createdUser;
 export const selectError = (state) => state.auth.error;

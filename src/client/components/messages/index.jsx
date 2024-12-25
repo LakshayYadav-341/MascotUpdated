@@ -6,24 +6,24 @@ import { useGetter } from '../../hooks/fetcher';
 import urls, { basePath } from '@utils/urls';
 import { selectSession } from '../auth/authSlice';
 
-// Assuming you have basePath and urls defined somewhere
-// import { basePath, urls } from 'wherever-it-is-defined';
-// ... (other imports)
-
 const ChatComponent = () => {
   const session = useSelector(selectSession);
-  const connectionsUrl = basePath + urls.connections.getByUser.replace(":user", session?.user._id);
+  const connectionsUrl = basePath + urls.connections.getByUser.replace(":user", session?.user);
+
+  // Fetch connected users
   const { data: connectedUsers, mutate: connectionMutate, isLoading: connectionIsLoading } = useGetter(connectionsUrl);
+
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
 
+  // Handle sending a new message
   const sendMessage = () => {
     if (newMessage.trim() === '') return;
 
     const newMessageObj = {
       id: messages.length + 1,
-      sender: session.user._id,
+      sender: session.user,
       text: newMessage,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
@@ -33,7 +33,7 @@ const ChatComponent = () => {
   };
 
   useEffect(() => {
-    // You might want to fetch initial messages or perform other side effects here
+    // Fetch initial messages or perform other side effects here
   }, []);
 
   return (
@@ -50,23 +50,26 @@ const ChatComponent = () => {
           </div>
           <div className="friendList">
             {connectedUsers && connectedUsers.data && connectedUsers.data.length > 0 ? (
-              connectedUsers.data.map((reqUser) => (
-                <div
-                  key={reqUser.userId}
-                  className="chatPerson"
-                  onClick={() => setSelectedUser(reqUser)}
-                >
-                  <img
-                    src={reqUser.imageUrl}
-                    alt="personImg"
-                    style={{ width: '70px', height: '70px' }}
-                    className="profileImg"
-                  />
-                  <strong>{`${reqUser.firstname} ${reqUser.lastname}`}</strong>
-                  <small></small>
-                  <small></small>
-                </div>
-              ))
+              connectedUsers.data.map((reqUser) => {
+                const user = reqUser.users?.[0];
+                if (!user) return null;
+
+                return (
+                  <div
+                    key={reqUser._id}
+                    className="chatPerson"
+                    onClick={() => setSelectedUser(user)}
+                  >
+                    <img
+                      src={user.profilePhoto || '/default-profile.png'}
+                      alt="personImg"
+                      style={{ width: '70px', height: '70px' }}
+                      className="profileImg"
+                    />
+                    <strong>{`${user.name.first} ${user.name.last}`}</strong>
+                  </div>
+                );
+              })
             ) : (
               <p>No connected users found</p>
             )}
@@ -77,11 +80,11 @@ const ChatComponent = () => {
             {selectedUser && (
               <>
                 <img
-                  src={selectedUser.imageUrl}
+                  src={selectedUser.imageUrl || '/default-profile.png'}
                   alt="profileImg"
                   className="profileImg"
                 />
-                <h2>{`${selectedUser.firstname} ${selectedUser.lastname}`}</h2>
+                <h2>{`${selectedUser.name.first} ${selectedUser.name.last}`}</h2>
               </>
             )}
           </div>
@@ -89,7 +92,7 @@ const ChatComponent = () => {
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`message ${message.sender === session.user._id ? 'sent' : 'received'}`}
+                className={`message ${message.sender === session.user ? 'sent' : 'received'}`}
               >
                 <p>{message.text}</p>
                 <span className="timestamp">{message.timestamp}</span>
@@ -111,7 +114,7 @@ const ChatComponent = () => {
         </div>
       </div>
       <div className="rightChatContent">
-        <Footer></Footer>
+        <Footer />
       </div>
     </main>
   );

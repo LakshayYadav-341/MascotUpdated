@@ -125,7 +125,7 @@ const ProfileComponent = ({
     }
 
     useEffect(() => {
-        setOthers(session?.user._id !== params.id)
+        setOthers(session?.user !== params.id)
     }, [session.token]);
 
     const handleSubmit = async (e) => {
@@ -135,7 +135,7 @@ const ProfileComponent = ({
         for (const entry of formData.entries()) {
             address[entry[0]] = entry[1]
         }
-        const res = await axios.post(basePath + urls.user.profile.create, { address, role: session?.user?.role }, {
+        const res = await axios.post(basePath + urls.user.profile.create, { address, role: tempUser?.data?.role }, {
             headers: {
                 authorization: `Bearer ${session?.token}`
             }
@@ -270,7 +270,7 @@ const ProfileComponent = ({
                             {/* Cover and Edit Button */}
                             <div className="cover"></div>
                             {
-                                tempUser?.data?._id === session.user._id && (
+                                tempUser?.data?._id === session.user && (
                                     <Link to="/edit-details">
                                         <span className="material-symbols-rounded cover-edit">edit</span>
                                     </Link>
@@ -280,7 +280,7 @@ const ProfileComponent = ({
                             {/* Profile Information */}
                             <div className="profileInfo tempProfile">
                                 <img src={tempUser?.data?.profilePhoto ? serverPath + tempUser?.data?.profilePhoto : tempImage} alt="profileImg" className="profileImg" />
-                                {tempUser?.data?._id === session?.user?._id && <>
+                                {tempUser?.data?._id === session?.user && <>
                                     <span
                                         className="material-symbols-rounded profile-edit-button"
                                         onClick={() => setProfilePhotoModalOpen(true)}
@@ -398,7 +398,7 @@ const ProfileComponent = ({
                                     )} */}
                                 </div>
                                 {/* Apply for Alumni Form (conditionally rendered) */}
-                                {tempUser?.data?.role === 'student' && connectionData?.data?.length === 0 && tempUser?.data?._id === session.user._id && (
+                                {tempUser?.data?.role === 'student' && connectionData?.data?.length === 0 && tempUser?.data?._id === session.user && (
                                     <Link to="#" data-bs-toggle="modal" data-bs-target="#aboutModal" className="linkStyle"
                                         style={{ position: "absolute", bottom: "1rem", right: "1rem" }}
                                     >
@@ -446,7 +446,7 @@ const ProfileComponent = ({
                                         <span className="material-symbols-rounded">group</span>
                                     </div>
                                     <div style={{ fontSize: '20px', textDecoration: 'none' }}>
-                                        <Link to={session?.user._id !== params.id ? '#' : '/network'} className="linkStyle">{connectedUser?.data.length} connections</Link>
+                                        <Link to={session?.user !== params.id ? '#' : '/network'} className="linkStyle">{connectedUser?.data?.length} connections</Link>
                                         <div style={{ fontSize: '12px' }}>See Your connections.</div>
                                     </div>
                                 </div>

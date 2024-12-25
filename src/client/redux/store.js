@@ -45,8 +45,6 @@ export const store = configureStore({
                 ],
             },
         }).concat(thunk),
-    // preloadedState: true,
-    devTools: process.env.NODE_ENV !== "production",
 });
 
 export const persistor = persistStore(store);

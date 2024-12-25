@@ -1,8 +1,8 @@
 
-export const serverPath = import.meta.env.VITE_SERVER_PATH
+export const serverPath = "https://mascotbackend.onrender.com"
 export const basePath = serverPath+"/api"
 
-export const socketServerPath = import.meta.env.VITE_SOCKET_SERVER
+export const socketServerPath = "https://mascotbackend.onrender.com"
 
 export default {
     auth: {

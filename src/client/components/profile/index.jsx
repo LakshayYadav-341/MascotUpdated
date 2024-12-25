@@ -446,7 +446,7 @@ const ProfileComponent = ({
                                         <span className="material-symbols-rounded">group</span>
                                     </div>
                                     <div style={{ fontSize: '20px', textDecoration: 'none' }}>
-                                        <Link to={session?.user !== params.id ? '#' : '/network'} className="linkStyle">{connectedUser?.data?.length} connections</Link>
+                                        <Link to={session?.user !== params.id ? '#' : '/network'} className="linkStyle">{typeof connectedUser.data === "string"?0 : connectedUser?.data?.length} connections</Link>
                                         <div style={{ fontSize: '12px' }}>See Your connections.</div>
                                     </div>
                                 </div>

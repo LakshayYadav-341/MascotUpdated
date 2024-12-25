@@ -49,7 +49,7 @@ const ChatComponent = () => {
             <input type="text" placeholder="search messages" />
           </div>
           <div className="friendList">
-            {connectedUsers && connectedUsers.data && connectedUsers.data.length > 0 ? (
+            {connectedUsers && connectedUsers.data && typeof connectedUsers.data !== "string" && connectedUsers.data.length > 0 ? (
               connectedUsers.data.map((reqUser) => {
                 const user = reqUser.users?.[0];
                 if (!user) return null;

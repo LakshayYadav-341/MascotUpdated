@@ -17,7 +17,7 @@ export default function Footer() {
             <Link to="/faq">FAQs</Link>
           </div>
         </div>
-        <p className="footerBottom">Mascot &copy; 2023. All Rights Reserved.</p>
+        <p className="footerBottom">Mascot &copy; 2024. All Rights Reserved.</p>
       </div>
     </>
   );

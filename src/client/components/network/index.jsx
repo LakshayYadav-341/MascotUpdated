@@ -1,14 +1,12 @@
 import Loading from "@client/components/loading";
 import urls, { basePath } from "@utils/urls";
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import { useGetter } from "../../hooks/fetcher";
 import { selectSession } from "../auth/authSlice";
 import ConnectedUser from "../cards/ConnectedUser";
 import RequestedUser from "../cards/RequestedUser";
 import SuggestedUserCard from "../cards/SuggestedUserCard";
-import axios from "axios";
 
 const NetworkComponent = () => {
   const session = useSelector(selectSession);
@@ -31,86 +29,25 @@ const NetworkComponent = () => {
     mutate: suggestMutate,
     isLoading: suggestIsLoading,
   } = useGetter(suggestUrl);
+
   return (
     <>
       <main className="networkContainer">
+        {/* Left Content */}
         <div className="leftNetworkContent content">
           <div className="card">
-            <h5>Manage my network</h5>
-            <Link to="/network" className="network-link">
-              <div className="networkCommunity">
-                <div className="networkSummary">
-                  <i className="fa-solid fa-user-group"></i>
-                  <p>Connections</p>
-                </div>
-                <div>{connectedUser?.data.length}</div>
-              </div>
-            </Link>
-            <Link to="/contacts" className="network-link">
-              <div className="networkCommunity">
-                <div className="networkSummary">
-                  <i className="fa-regular fa-address-book"></i>
-                  <p>Contacts</p>
-                </div>
-                <div>17</div>
-              </div>
-            </Link>
-            <Link to="/following-followers" className="network-link">
-              <div className="networkCommunity">
-                <div className="networkSummary">
-                  <i className="fa-solid fa-user"></i>
-                  <p>Following & Followers</p>
-                </div>
-                <div>72</div>
-              </div>
-            </Link>
-            <Link to="/groups" className="network-link">
-              <div className="networkCommunity">
-                <div className="networkSummary">
-                  <i className="fa-solid fa-users"></i>
-                  <p>Groups</p>
-                </div>
-                <div>12</div>
-              </div>
-            </Link>
-            <Link to="/events" className="network-link">
-              <div className="networkCommunity">
-                <div className="networkSummary">
-                  <i className="fa-regular fa-calendar-days"></i>
-                  <p>Events</p>
-                </div>
-                <div>5</div>
-              </div>
-            </Link>
-            <Link to="/pages" className="network-link">
-              <div className="networkCommunity">
-                <div className="networkSummary">
-                  <i className="fa-solid fa-floppy-disk"></i>
-                  <p>Pages</p>
-                </div>
-                <div>128</div>
-              </div>
-            </Link>
-            <Link to="/newsletters" className="network-link">
-              <div className="networkCommunity">
-                <div className="networkSummary">
-                  <i className="fa-regular fa-newspaper"></i>
-                  <p>Newsletters</p>
-                </div>
-                <div>23</div>
-              </div>
-            </Link>
-            <Link to="/hashtags" className="network-link">
-              <div className="networkCommunity">
-                <div className="networkSummary">
-                  <i className="fa-regular fa-hashtag"></i>
-                  <p>Hashtags</p>
-                </div>
-                <div>55</div>
-              </div>
-            </Link>
+            <h5>Welcome to Your Network!</h5>
+            <p>Discover people you may know, manage connection requests, and expand your network.</p>
+            <ul>
+              <li>💡 Check out connection suggestions to grow your professional circle.</li>
+              <li>📬 Respond to connection requests to build meaningful relationships.</li>
+              <li>🔍 Use the search feature to find specific users in your network.</li>
+            </ul>
+            <p>Start building your network today!</p>
           </div>
         </div>
+
+        {/* Center Content */}
         <div className="centerNetworkContainer content">
           <div className="card">
             <div className="networkHead">
@@ -161,6 +98,8 @@ const NetworkComponent = () => {
             </div>
           </div>
         </div>
+
+        {/* Right Content */}
         <div className="rightNetworkContainer content">
           <div className="card left-group">
             <div className="networkHead">
@@ -170,7 +109,8 @@ const NetworkComponent = () => {
               <Loading style={{ padding: "1rem", height: "none" }} />
             )}
             {!connectionIsLoading &&
-              (connectedUser?.data?.length > 0 ? (
+              (typeof connectedUser.data !== "string" &&
+              connectedUser?.data?.length > 0 ? (
                 connectedUser?.data?.map((eachUser) => {
                   return (
                     <ConnectedUser

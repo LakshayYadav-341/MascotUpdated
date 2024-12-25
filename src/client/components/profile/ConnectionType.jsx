@@ -23,7 +23,7 @@ const ConnectionType = (props) => {
     const [request, setRequest] = useState({});
     useEffect(() => {
         let flag1 = false;
-        if (connectedUser && connectedUser.data.status !== "error") {
+        if (connectedUser && connectedUser.data !== "error" && typeof connectedUser.data !== "string") {
             connectedUser?.data?.forEach(eachUser => {
                 if (eachUser?.users[0]._id === props.userId) {
                     flag1 = true;

@@ -1,13 +1,12 @@
-import AchievementHandler from "../../handlers/achievement"
-import { verifyParams, verifyToken } from "../../server/middleware/verify"
-import Achievement from "../../server/models/achievement"
-import { getValue } from "../../utils/object"
-import { Router } from "express"
+import AchievementHandler from "../../handlers/achievement";
+import { verifyParams, verifyToken } from "../../server/middleware/verify";
+import Achievement from "../../server/models/achievement";
+import { getValue } from "../../utils/object";
+import { Router } from "express";
 
-const app = Router()
-const handler = new AchievementHandler()
+const app = Router();
+const handler = new AchievementHandler();
 
-/**
 /**
  * @swagger
  * /api/achievements:
@@ -43,9 +42,14 @@ const handler = new AchievementHandler()
  */
 
 app.get("/", verifyToken(), async (_, res) => {
-    const achievements = await Achievement.find() || []
-    return res.status(200).send(handler.success(achievements))
-})
+  try {
+    const achievements = await Achievement.find() || [];
+    return res.status(200).json(handler.success(achievements));
+  } catch (error) {
+    console.error("Error retrieving achievements:", error);
+    return res.status(500).json(handler.error("An unexpected error occurred while retrieving achievements."));
+  }
+});
 
 /**
  * @swagger
@@ -91,12 +95,27 @@ app.get("/", verifyToken(), async (_, res) => {
  *     properties:
  *       // Define properties of the Achievement object here
  */
-app.get("/:id", verifyToken(), verifyParams(["id"]), async (_, res) => {
+app.get("/:id", verifyToken(), verifyParams(["id"]), async (req, res) => {
+  try {
     const { keys, values } = res.locals;
-    const acievement = await Achievement.findById(getValue(keys, values, "id"))
-    if(!acievement)
-        return res.status(404).json(handler.error(handler.STATUS_404));
-    return res.status(200).json(handler.success(acievement));
-})
+    const id = getValue(keys, values, "id");
 
-export default app
+    // Ensure ID is valid
+    if (!id) {
+      return res.status(400).json(handler.error("Invalid ID parameter."));
+    }
+
+    const achievement = await Achievement.findById(id);
+
+    if (!achievement) {
+      return res.status(404).json(handler.error("Achievement not found."));
+    }
+
+    return res.status(200).json(handler.success(achievement));
+  } catch (error) {
+    console.error(`Error retrieving achievement by ID: ${req.params.id}`, error);
+    return res.status(500).json(handler.error("An unexpected error occurred while retrieving the achievement."));
+  }
+});
+
+export default app;

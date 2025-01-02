@@ -81,7 +81,7 @@ app.get("/getPost/:post", verifyToken(), verifyParams(["post"]), async (_, res) 
             post: reportedPostId
         }).populate([{ path: "post" }, { path: "by" }]);
 
-        if (!reportedPosts || reportedPosts.length === 0) {
+        if (!reportedPosts) {
             return res.status(405).send(handler.error(handler.STATUS_404));
         }
 

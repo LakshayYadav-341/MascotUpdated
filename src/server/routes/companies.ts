@@ -40,10 +40,19 @@ const handler = new CompanyHandler();
  *       // Define properties of the Company object here
  */
 
-
 app.get("/", verifyToken(), async (_, res) => {
-    const companies = (await Company.find()) || [];
-    return res.status(200).send(handler.success(companies));
+    try {
+        const companies = await Company.find();
+
+        if (!companies) {
+            return res.status(404).send(handler.error("No companies found"));
+        }
+
+        return res.status(200).send(handler.success(companies));
+    } catch (error) {
+        console.error("Error retrieving companies:", error);
+        return res.status(500).send(handler.error("Internal Server Error"));
+    }
 });
 
 export default app;

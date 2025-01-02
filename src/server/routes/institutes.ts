@@ -5,75 +5,59 @@ import { getValue } from "../../utils/object";
 import { Router } from "express";
 
 const app = Router();
-const handler = new InstituteHandler()
-
-app.get("/", verifyToken(), async (_, res) => {
-    const institutes = await Institute.find().populate([
-        "admin", "address", "faculty", "courses", "awards"
-    ]).exec()
-    if(!institutes)
-        return res.status(404).json(handler.error(handler.STATUS_404));
-    return res.status(200).json(handler.success(institutes));
-})
+const handler = new InstituteHandler();
 
 /**
- * @swagger
- * /api/institutes/{id}:
- *   get:
- *     summary: Retrieve an institute by ID
- *     description: Retrieve details of an institute by its ID from the database.
- *     security:
- *       - jwt: []
- *     parameters:
- *       - in: path
- *         name: id
- *         description: ID of the institute to retrieve
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       '200':
- *         description: A successful response with details of the institute.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/definitions/Institute'
- *       '404':
- *         description: Institute not found.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/definitions/Error'
- *       '401':
- *         description: Unauthorized. Token is missing or invalid.
- *       '500':
- *         description: Internal Server Error.
- *     examples:
- *       example1:
- *         summary: Example of authorization header
- *         value:
- *           headers:
- *             Authorization: Bearer <JWT-Token>
- * definitions:
- *   Institute:
- *     type: object
- *     properties:
- *       // Define properties of the Institute object here
- *   Error:
- *     type: object
- *     properties:
- *       // Define properties of the Error object here
+ * GET /api/institutes
+ * Retrieve all institutes.
  */
+app.get("/", verifyToken(), async (_req, res) => {
+    try {
+        const institutes = await Institute.find()
+            .populate(["admin", "address", "faculty", "courses", "awards"])
+            .exec();
 
+        if (!institutes) {
+            return res
+                .status(404)
+                .json(handler.error("No institutes found in the database."));
+        }
 
-app.get("/:id", verifyToken(), verifyParams(["id"]), async (_, res) => {
-    const { keys, values } = res.locals;
-    const institute = await Institute.findById(getValue(keys, values, "id")).populate([
-        "admin", "address", "faculty", "courses", "awards"
-    ]).exec()
-    if(!institute)
-        return res.status(404).json(handler.error(handler.STATUS_404));
-    return res.status(200).json(handler.success(institute));
-})
+        return res.status(200).json(handler.success(institutes));
+    } catch (error) {
+        console.error("Error fetching institutes:", error);
+        return res
+            .status(500)
+            .json(handler.error("An unexpected error occurred while retrieving institutes."));
+    }
+});
 
-export default app
+/**
+ * GET /api/institutes/{id}
+ * Retrieve an institute by ID.
+ */
+app.get("/:id", verifyToken(), verifyParams(["id"]), async (_req, res) => {
+    try {
+        const { keys, values } = res.locals;
+        const instituteId = getValue(keys, values, "id");
+
+        const institute = await Institute.findById(instituteId)
+            .populate(["admin", "address", "faculty", "courses", "awards"])
+            .exec();
+
+        if (!institute) {
+            return res
+                .status(404)
+                .json(handler.error(`Institute with ID ${instituteId} not found.`));
+        }
+
+        return res.status(200).json(handler.success(institute));
+    } catch (error) {
+        console.error("Error fetching institute by ID:", error);
+        return res
+            .status(500)
+            .json(handler.error("An unexpected error occurred while retrieving the institute."));
+    }
+});
+
+export default app;

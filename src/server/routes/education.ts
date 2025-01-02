@@ -48,38 +48,61 @@ const handler = new EducationHandler();
  *         description: Unauthorized access
  *       '404':
  *         description: Failed to create education record or profile not found
+ *       '500':
+ *         description: Internal server error
  */
 
 app.post(
-    "/create",
-    verifyToken(),
-    verifyBody(["institute", "type", "joined", "completion.isCurrent", ]),
-    async (_, res) => {
-        const { keys, values, session } = res.locals;
-        const profile = await Profile.findById(session.user?.profile)
-        if(!profile) {
-            return res.status(404).send(handler.error("Profile not found! Please create your profile first"))
-        }
-        const education = await Education.create({
-            institute: getValue(keys, values, "institute"),
-            type: getValue(keys, values, "type"),
-            joined: getValue(keys, values, "joined"),
-            completion: {
-                isCurrent: getValue(keys, values, "completion.isCurrent")
-            },
-            remarks: getValue(keys, values, "remarks")
-        });
-        if (!education)      
-            return res.status(404).json(handler.error(handler.STATUS_404));
-        profile.set("education", [...profile.education, education])
-        const updatedProfile = await profile.save()
-        if(!updatedProfile) {
-            return res.status(404).json(handler.error(handler.STATUS_404));
-        }
-        return res.status(200).json(handler.success(updatedProfile))
-        
-    }
-);
+  "/create",
+  verifyToken(),
+  verifyBody(["institute", "type", "joined", "completion.isCurrent"]),
+  async (_req, res) => {
+    try {
+      const { keys, values, session } = res.locals;
 
+      // Find the user's profile
+      const profile = await Profile.findById(session.user?.profile);
+      if (!profile) {
+        return res
+          .status(404)
+          .json(handler.error("Profile not found! Please create your profile first."));
+      }
+
+      // Create the education record
+      const education = await Education.create({
+        institute: getValue(keys, values, "institute"),
+        type: getValue(keys, values, "type"),
+        joined: getValue(keys, values, "joined"),
+        completion: {
+          isCurrent: getValue(keys, values, "completion.isCurrent"),
+        },
+        remarks: getValue(keys, values, "remarks"),
+      });
+
+      if (!education) {
+        return res
+          .status(500)
+          .json(handler.error("Failed to create the education record."));
+      }
+
+      // Update the profile with the new education record
+      profile.set("education", [...profile.education, education]);
+      const updatedProfile = await profile.save();
+
+      if (!updatedProfile) {
+        return res
+          .status(500)
+          .json(handler.error("Failed to update the profile with education."));
+      }
+
+      return res.status(200).json(handler.success(updatedProfile));
+    } catch (error) {
+      console.error("Error creating education record:", error);
+      return res
+        .status(500)
+        .json(handler.error("An unexpected error occurred."));
+    }
+  }
+);
 
 export default app;

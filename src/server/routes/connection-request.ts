@@ -24,41 +24,6 @@ const multer = Multer({
 
 const required = ["to", "type"];
 
-/**
- * @swagger
- * /connection-request/create:
- *   post:
- *     summary: Create a connection request
- *     description: Endpoint to create a new connection request
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               type:
- *                 type: string
- *               to:
- *                 type: string
- *               institute:
- *                 type: string
- *               document:
- *                 type: string
- *                 format: binary
- *     responses:
- *       '200':
- *         description: Connection request created successfully
- *       '401':
- *         description: Unauthorized access
- *       '404':
- *         description: Failed to create connection request
- *       '422':
- *         description: Unprocessable Entity
- */
-
 app.post("/create", verifyToken(), multer.single("document"), verifyBody(required), async (req, res) => {
     try {
         const { keys, values, session } = res.locals;
@@ -126,7 +91,6 @@ app.get("/:type", verifyToken(), verifyParams(["type"]), async (_, res) => {
     }
 });
 
-// DELETE request to ignore a connection request
 app.delete("/:request/ignore", verifyToken(), verifyParams(["request"]), async (_, res) => {
     try {
         const { keys, values } = res.locals;
@@ -143,45 +107,6 @@ app.delete("/:request/ignore", verifyToken(), verifyParams(["request"]), async (
         return res.status(500).send(handler.error("Internal server error. Could not ignore the connection request."));
     }
 });
-
-/**
- * @swagger
- * /api/connection-request/{request}/mutual/accept:
- *   put:
- *     summary: Accept mutual connection request
- *     description: Accepts a mutual connection request specified by the request ID.
- *     parameters:
- *       - in: path
- *         name: request
- *         schema:
- *           type: string
- *         required: true
- *         description: The ID of the connection request to accept.
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       '200':
- *         description: A successful response with the accepted connection.
- *       '403':
- *         description: Forbidden. User does not have permission to accept this connection request.
- *       '404':
- *         description: Not Found. Connection request not found or unable to create a connection.
- *       '401':
- *         description: Unauthorized. Token is missing or invalid.
- *       '500':
- *         description: Internal Server Error.
- *     examples:
- *       example1:
- *         summary: Example of authorization header
- *         value:
- *           headers:
- *             Authorization: Bearer <JWT-Token>
- * definitions:
- *   Connection:
- *     type: object
- *     properties:
- *       // Define properties of the Connection object here
- */
 
 app.put("/:request/mutual/accept", verifyToken(), verifyParams(["request"]), async (_, res) => {
     try {

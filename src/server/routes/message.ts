@@ -9,23 +9,29 @@ const app = Router();
 
 const handler = new MessageHandler();
 
-const required = ["chatId", "message"]
-app.post("/", verifyToken(), verifyBody(required), async(_, res)=>{
-    const {keys, values, session} = res.locals; 
-    const user = (session.user as IUser)._id.toString();
-    const chatId = getValue(keys, values, "chatId");
-    const message = getValue(keys, values, "message");
+const required = ["chatId", "message"];
+app.post("/", verifyToken(), verifyBody(required), async (_, res) => {
+    try {
+        const { keys, values, session } = res.locals; 
+        const user = (session.user as IUser)._id.toString();
+        const chatId = getValue(keys, values, "chatId");
+        const message = getValue(keys, values, "message");
 
-    const newMessage = await Message.create({
-        chat: chatId,
-        sender: user,
-        message: message
-    })
-    if(!newMessage){
-        return res.status(404).send(handler.error(handler.STATUS_404))
+        const newMessage = await Message.create({
+            chat: chatId,
+            sender: user,
+            message: message
+        });
+
+        if (!newMessage) {
+            return res.status(404).send(handler.error("Failed to create a new message."));
+        }
+        return res.status(200).send(handler.success(newMessage));
+    } catch (error) {
+        console.error("Error creating message:", error);
+        return res.status(500).json(handler.error("An unexpected error occurred while creating the message."));
     }
-    return res.status(200).send(handler.success(newMessage))
-})
+});
 
 /**
  * @swagger
@@ -70,16 +76,20 @@ app.post("/", verifyToken(), verifyBody(required), async(_, res)=>{
  *       // Define properties of the Message object here
  */
 
-app.get("/:chatId", verifyToken(), verifyParams(["chatId"]), async(_, res)=>{
-    const {keys, values} = res.locals;
-    const chatId = getValue(keys, values, "chatId");
-    const messages = await Message.find({
-        chat: chatId
-    })
-    if(!messages){
-        return res.status(404).send(handler.error(handler.STATUS_404))
+app.get("/:chatId", verifyToken(), verifyParams(["chatId"]), async (_, res) => {
+    try {
+        const { keys, values } = res.locals;
+        const chatId = getValue(keys, values, "chatId");
+        const messages = await Message.find({ chat: chatId });
+
+        if (!messages) {
+            return res.status(404).send(handler.error("No messages found for the specified chat ID."));
+        }
+        return res.status(200).send(handler.success(messages));
+    } catch (error) {
+        console.error("Error retrieving messages:", error);
+        return res.status(500).json(handler.error("An unexpected error occurred while retrieving messages."));
     }
-    return res.status(200).send(handler.success(messages))
-})
+});
 
 export default app;

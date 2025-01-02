@@ -32,71 +32,6 @@ const registerFields = [
     "role",
 ];
 
-/**
- * @swagger
- * /api/auth/register:
- *   post:
- *     summary: User registration
- *     description: Register a new user.
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: object
- *                 properties:
- *                   first:
- *                     type: string
- *                   last:
- *                     type: string
- *               dob:
- *                 type: string
- *                 format: date
- *               email:
- *                 type: string
- *                 format: email
- *               phone:
- *                 type: string
- *               password:
- *                 type: string
- *               role:
- *                 type: string
- *     responses:
- *       '200':
- *         description: User registered successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/UserSession'
- *       '401':
- *         description: Error occurred during registration
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *     security: []
- * components:
- *   schemas:
- *     UserSession:
- *       type: object
- *       properties:
- *         user:
- *           type: string
- *           description: The unique identifier of the registered user.
- *         token:
- *           type: string
- *           description: JWT token for the registered user's session.
- *     Error:
- *       type: object
- *       properties:
- *         message:
- *           type: string
- *           description: Description of the error occurred during registration.
- */
-
 app.post(
     "/register",
     multer.single("profilePhoto"),
@@ -104,27 +39,27 @@ app.post(
     async (req, res) => {
         const { keys, values } = res.locals;
 
-        // Create a new user instance
-        let user = new User({
-            name: {
-                first: getValue(keys, values, "name.first"),
-                last: getValue(keys, values, "name.last"),
-            },
-            dob: getValue(keys, values, "dob"),
-            email: getValue(keys, values, "email"),
-            phone: getValue(keys, values, "phone"),
-            password: getValue(keys, values, "password") as string,
-            role:
-                getValue(keys, values, "role") === "institute"
-                    ? ProfileRoles.admin
-                    : getValue(keys, values, "role"),
-            ...(keys.includes("bio") &&
-                getValue(keys, values, "bio").length && {
-                    bio: getValue(keys, values, "bio"),
-                }),
-        } as IUser);
-
         try {
+            // Create a new user instance
+            let user = new User({
+                name: {
+                    first: getValue(keys, values, "name.first"),
+                    last: getValue(keys, values, "name.last"),
+                },
+                dob: getValue(keys, values, "dob"),
+                email: getValue(keys, values, "email"),
+                phone: getValue(keys, values, "phone"),
+                password: getValue(keys, values, "password") as string,
+                role:
+                    getValue(keys, values, "role") === "institute"
+                        ? ProfileRoles.admin
+                        : getValue(keys, values, "role"),
+                ...(keys.includes("bio") &&
+                    getValue(keys, values, "bio").length && {
+                        bio: getValue(keys, values, "bio"),
+                    }),
+            } as IUser);
+
             // Validate the user object
             await user.validate();
 
@@ -150,7 +85,7 @@ app.post(
                 });
 
                 if (!admin) {
-                    return res.status(404).send(handler.error(handler.STATUS_404));
+                    return res.status(404).send(handler.error("Admin record creation failed."));
                 }
 
                 // Associate the admin ID with the user
@@ -183,161 +118,80 @@ app.post(
 
             return res.status(200).send(handler.success(session));
         } catch (err: MongooseError | any) {
-            return res.status(401).send(handler.error(err.message));
+            console.error("Registration Error:", err.message || err);
+            return res.status(500).send(handler.error("An unexpected error occurred during registration."));
         }
     }
 );
-
-
-/**
- * @swagger
- * /api/auth/login:
- *   post:
- *     summary: User login
- *     description: Login with email and password to authenticate user.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *     responses:
- *       '200':
- *         description: Successful login. Returns a session token.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/definitions/Session'
- *       '401':
- *         description: Unauthorized. Incorrect email or password.
- *       '404':
- *         description: User not found.
- *       '500':
- *         description: Internal Server Error.
- *     examples:
- *       example1:
- *         summary: Example of login request body
- *         value:
- *           email: example@example.com
- *           password: password123
- * definitions:
- *   Session:
- *     type: object
- *     properties:
- *       _id:
- *         type: string
- *       user:
- *         $ref: '#/definitions/User'
- *       token:
- *         type: string
- *       createdAt:
- *         type: string
- *         format: date-time
- *   User:
- *     type: object
- *
- */
 
 app.post(
     "/login",
     verifyBody(["email", "password"], handler),
     async (_, res) => {
         const { keys, values } = res.locals;
-        const user = await User.findOne({ email: getValue(keys, values, "email") }).populate("admin").lean<IUser>();
-        if (!user) {
-            return res.status(404).send(handler.error(handler.STATUS_404));
+
+        try {
+            const user = await User.findOne({ email: getValue(keys, values, "email") })
+                .populate("admin")
+                .lean<IUser>();
+
+            if (!user) {
+                return res.status(404).send(handler.error("User not found."));
+            }
+
+            if (
+                !Hash.simpleCompare(
+                    getValue(keys, values, "password") as string,
+                    user.password
+                )
+            ) {
+                return res.status(401).send(handler.error("Incorrect password, try again."));
+            }
+
+            const token = jwt.sign(
+                {
+                    user: user._id.toString(),
+                    createdAt: Date.now(),
+                },
+                JWT_SECRET,
+                { expiresIn: JWT_SESSION_TIMEOUT }
+            );
+
+            const session = await Session.create({ user: user._id, token });
+            session.user = user as IUser;
+
+            return res.status(200).send(handler.success(session));
+        } catch (err) {
+            console.error("Login Error:", err.message || err);
+            return res.status(500).send(handler.error("An unexpected error occurred during login."));
         }
-        console.log(
-            getValue(keys, values, "password") as string,
-            user.password
-        );
-        if (
-            !Hash.simpleCompare(
-                getValue(keys, values, "password") as string,
-                user.password
-            )
-        ) {
-            return res
-                .status(401)
-                .send(handler.error("Incorrect password, try again."));
-        }
-        const token = jwt.sign(
-            {
-                user: user._id.toString(),
-                createdAt: Date.now(),
-            },
-            JWT_SECRET,
-            { expiresIn: JWT_SESSION_TIMEOUT }
-        );
-        const session = await Session.create({ user: user._id, token });
-        session.user = user as IUser;
-        return res.status(200).send(handler.success(session));
     }
 );
 
 app.post("/verify", verifyToken(handler), (_, res) => {
-    return res.status(200).send(handler.success(res.locals.session));
+    try {
+        return res.status(200).send(handler.success(res.locals.session));
+    } catch (err) {
+        console.error("Token Verification Error:", err.message || err);
+        return res.status(500).send(handler.error("An unexpected error occurred during token verification."));
+    }
 });
-
-/**
- * @swagger
- * /api/auth/get-user/{email}:
- *   get:
- *     summary: Get user by email
- *     description: Retrieve user information by email.
- *     parameters:
- *       - in: path
- *         name: email
- *         required: true
- *         schema:
- *           type: string
- *         description: Email address of the user to retrieve.
- *     responses:
- *       '200':
- *         description: User information retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       '404':
- *         description: User not found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *     security: []
- * components:
- *   schemas:
- *     User:
- *       type: object
- *       properties:
- *         _id:
- *           type: string
- *           description: The unique identifier of the user.
- *         email:
- *           type: string
- *           format: email
- *           description: The email address of the user.
- *     Error:
- *       type: object
- *       properties:
- *         message:
- *           type: string
- *           description: Description of the error occurred when user is not found.
- */
 
 app.get("/get-user/:email", verifyParams(["email"]), async (_, res) => {
     const { keys, values } = res.locals;
-    const user = await User.findOne({ email: getValue(keys, values, "email") });
-    // if (!user) {
-    //     return res.status(404).send(handler.error('User not found'));
-    // }
-    return res.status(200).send(handler.success(user || {}));
+
+    try {
+        const user = await User.findOne({ email: getValue(keys, values, "email") });
+
+        if (!user) {
+            return res.status(404).send(handler.error("User not found."));
+        }
+
+        return res.status(200).send(handler.success(user));
+    } catch (err) {
+        console.error("Get User Error:", err.message || err);
+        return res.status(500).send(handler.error("An unexpected error occurred while fetching the user."));
+    }
 });
 
 export default app;

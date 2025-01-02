@@ -8,6 +8,11 @@ import IUser from "../../types_/user";
 const app = Router();
 const handler = new ConnectionHandler();
 
+// Error handling middleware
+const handleError = (res, error, message) => {
+    console.error(message, error);
+    return res.status(500).send(handler.error(message));
+};
 
 // POST request to create a connection
 app.post("/create", verifyToken(), async (req, res) => {
@@ -27,8 +32,7 @@ app.post("/create", verifyToken(), async (req, res) => {
 
         return res.status(200).send(handler.success(connection));
     } catch (error) {
-        console.error("Error creating connection:", error);
-        return res.status(500).send(handler.error("Internal server error. Could not create connection."));
+        return handleError(res, error, "Internal server error. Could not create connection.");
     }
 });
 
@@ -36,13 +40,12 @@ app.post("/create", verifyToken(), async (req, res) => {
 app.get("/", async (_, res) => {
     try {
         const connections = await Connection.find();
-        if (!connections || connections.length === 0) {
+        if (!connections) {
             return res.status(404).send(handler.error("No connections found."));
         }
         return res.status(200).send(handler.success(connections));
     } catch (error) {
-        console.error("Error retrieving connections:", error);
-        return res.status(500).send(handler.error("Internal server error. Could not fetch connections."));
+        return handleError(res, error, "Internal server error. Could not fetch connections.");
     }
 });
 
@@ -61,8 +64,7 @@ app.get("/:id", async (req, res) => {
 
         return res.status(200).send(handler.success(connection));
     } catch (error) {
-        console.error("Error retrieving connection:", error);
-        return res.status(500).send(handler.error("Internal server error. Could not retrieve connection."));
+        return handleError(res, error, "Internal server error. Could not retrieve connection.");
     }
 });
 
@@ -81,8 +83,7 @@ app.delete("/:id", verifyToken(), async (req, res) => {
 
         return res.status(200).send(handler.success(connection));
     } catch (error) {
-        console.error("Error deleting connection:", error);
-        return res.status(500).send(handler.error("Internal server error. Could not delete connection."));
+        return handleError(res, error, "Internal server error. Could not delete connection.");
     }
 });
 
@@ -97,9 +98,9 @@ app.delete("/delete/:id", verifyToken(), verifyParams(["id"]), async (_req, res)
             return res.status(400).send(handler.error("Both users' IDs are required."));
         }
 
-        const connection = await Connection.deleteOne(
-            { users: { $all: [loggedInUserId, targetUserId] } },
-        );
+        const connection = await Connection.deleteOne({
+            users: { $all: [loggedInUserId, targetUserId] },
+        });
 
         if (!connection || connection.deletedCount === 0) {
             return res.status(404).send(handler.error("Connection not found or already deleted."));
@@ -107,8 +108,7 @@ app.delete("/delete/:id", verifyToken(), verifyParams(["id"]), async (_req, res)
 
         return res.status(200).send(handler.success(connection));
     } catch (error) {
-        console.error("Error deleting connection:", error);
-        return res.status(500).send(handler.error("Internal server error. Could not delete the connection."));
+        return handleError(res, error, "Internal server error. Could not delete the connection.");
     }
 });
 

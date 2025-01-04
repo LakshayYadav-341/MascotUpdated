@@ -47,10 +47,7 @@ export default function SignUp() {
     } catch (error) {
       
     }
-    if(!res){
-      toast.error("Some Error Occured!");
-    }
-    else if (res?.status === "error" || !Object.keys(res?.data?.data).includes("email")) {
+    if (res && res?.status === "error" || !Object.keys(res?.data?.data).includes("email")) {
       const password = data.get('password')
       // const hashed = await Hash.create(password)
       setCredential({

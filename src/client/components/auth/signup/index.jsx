@@ -45,9 +45,17 @@ export default function SignUp() {
     try {
       res = await axios.get(basePath + urls.auth.getUserByEmail.replace(":email", email))
     } catch (error) {
-      
+      if (error.response) {
+        res = error.response;
+      } else {
+        return toast.error("An Unexpected error occured! Please try again later.")
+      }
     }
-    if (res && res?.status === "error" || !Object.keys(res?.data?.data).includes("email")) {
+
+    if(res.status === 500)
+      return toast.error("An Unexpected error occured! Please try again later.")
+
+    else if (res && res.status === 404) {
       const password = data.get('password')
       // const hashed = await Hash.create(password)
       setCredential({

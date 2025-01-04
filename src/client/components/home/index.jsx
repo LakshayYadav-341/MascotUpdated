@@ -39,9 +39,10 @@ const HomeComponent = ({ role, user, connection, users, posts }) => {
             authorization: `Bearer ${session.token}`,
           },
         });
-        setTempPosts(res.data.data);
+        setTempPosts(res.data.data || []);
       } catch (error) {
         console.error("Error while fetching posts:", error);
+        setTempPosts([]);
       } finally {
         setIsLoading(false);
       }
@@ -50,11 +51,11 @@ const HomeComponent = ({ role, user, connection, users, posts }) => {
     fetchData();
   }, [isPostChanged, session.token]);
 
-  if (isLoading || tempUserLoading) {
+  if (isLoading || tempUserLoading || connectionIsLoading || newsLoading || suggestIsLoading) {
     return <Loading />;
   }
 
-  if (!tempUser) {
+  if (!tempUser?.data) {
     return <div>Error loading user data.</div>;
   }
 
@@ -66,24 +67,24 @@ const HomeComponent = ({ role, user, connection, users, posts }) => {
           <div className="cover"></div>
           <div className="profileInfo">
             <img
-              src={tempUser?.data?.profilePhoto ? serverPath + tempUser?.data?.profilePhoto : profile}
+              src={tempUser.data.profilePhoto ? serverPath + tempUser.data.profilePhoto : profile}
               alt="profileImg"
               className="profileImg"
             />
             <strong className="userName">
-              {tempUser?.data?.name?.first} {tempUser?.data?.name?.last}{" "}
+              {tempUser.data.name?.first} {tempUser.data.name?.last}{" "}
               <span style={{ textTransform: "capitalize" }}>
-                {Object.keys(tempUser?.data).includes("admin") ? "Admin" : tempUser?.data?.role}
+                {tempUser.data && Object.keys(tempUser.data).includes("admin") ? "Admin" : tempUser.data.role || ""}
               </span>
             </strong>
-            <small className="userProfession">{tempUser?.data?.bio || ""}</small>
+            <small className="userProfession">{tempUser.data.bio || ""}</small>
           </div>
           <div className="connection">
-            <strong>{typeof connectedUser.data === "string"?0 : connectedUser?.data?.length}</strong>
+            <strong>{connectedUser?.data ? (typeof connectedUser.data === "string" ? 0 : connectedUser.data.length) : 0}</strong>
             <small>Connections</small>
           </div>
           <div className="specialLink">
-            <Link to={`/profile/${tempUser?.data?._id}`}>My Profile</Link>
+            <Link to={`/profile/${tempUser.data._id}`}>My Profile</Link>
           </div>
         </div>
 
@@ -91,7 +92,7 @@ const HomeComponent = ({ role, user, connection, users, posts }) => {
         <div className="card left-group">
           <h5>Connect with more people.....</h5>
           {suggestIsLoading && <Loading style={{ padding: "1rem", height: "none" }} />}
-          {!suggestIsLoading && suggestedUser?.data?.length > 0 ? (
+          {Array.isArray(suggestedUser?.data) && suggestedUser.data.length > 0 ? (
             <>
               {suggestedUser.data.map((eachUser) => (
                 <SuggestedUser user={eachUser} key={eachUser._id} />
@@ -109,9 +110,11 @@ const HomeComponent = ({ role, user, connection, users, posts }) => {
       {/* Middle Container */}
       <div className="center-content content">
         <PostOptions isPostChanged={isPostChanged} setIsPostChanged={setIsPostChanged} />
-        {tempPosts.reverse().map((eachPost) => (
-          <PostCard key={eachPost._id} post={eachPost} />
-        ))}
+        {tempPosts?.length > 0 ? (
+          tempPosts.reverse().map((eachPost) => <PostCard key={eachPost._id} post={eachPost} />)
+        ) : (
+          <h5>No Posts Available</h5>
+        )}
       </div>
 
       {/* Right Container */}
@@ -119,8 +122,8 @@ const HomeComponent = ({ role, user, connection, users, posts }) => {
         <div className="card">
           <h5>Mascot News</h5>
           <ul className="newsSection list-group">
-            {newsData?.data?.length > 0 ? (
-              newsData?.data.map((eachNews, index) => (
+            {Array.isArray(newsData?.data) && newsData.data.length > 0 ? (
+              newsData.data.map((eachNews, index) => (
                 <li
                   className="list-group-item mt-2"
                   style={{ backgroundColor: "#1b2730", borderTopWidth: "1px" }}

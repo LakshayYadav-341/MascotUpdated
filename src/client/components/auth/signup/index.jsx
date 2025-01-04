@@ -41,9 +41,16 @@ export default function SignUp() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const email = data.get('email')
-
-    const res = await axios.get(basePath + urls.auth.getUserByEmail.replace(":email", email))
-    if (!Object.keys(res?.data?.data).includes("email")) {
+    let res;
+    try {
+      res = await axios.get(basePath + urls.auth.getUserByEmail.replace(":email", email))
+    } catch (error) {
+      
+    }
+    if(!res){
+      toast.error("Some Error Occured!");
+    }
+    else if (res?.status === "error" || !Object.keys(res?.data?.data).includes("email")) {
       const password = data.get('password')
       // const hashed = await Hash.create(password)
       setCredential({

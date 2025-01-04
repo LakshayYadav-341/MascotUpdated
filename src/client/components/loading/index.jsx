@@ -16,17 +16,6 @@ export default function Loading({ style }) {
       }}
     >
       <CircularProgress />
-      <Typography
-        sx={{
-          marginTop: 2,
-          textAlign: 'center',
-          color: 'gray',
-          fontSize: '1.5rem',
-        }}
-      >
-        The Node.js service deployed on Render has been stopped due to inactivity restrictions on free tier.<br />
-        Please wait or retry after 2 minutes; it will restart.
-      </Typography>
     </Box>
   );
 }

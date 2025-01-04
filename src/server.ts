@@ -105,14 +105,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(loggerMw);
 
-app.use("/", (_req, res) => {
-    return res.send("Server is Up.");
-});
-
 app.use("/api", apiRouter);
 app.use("/static/files", express.static(path.join(__dirname, "..", "public")));
 
 app.get("/docker", (_, res) => res.send("This works"));
+
+app.use("/", (_req, res) => {
+    return res.send("Server is Up.");
+});
 
 const swaggerOptions = {
     swaggerDefinition: {

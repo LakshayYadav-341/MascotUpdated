@@ -105,6 +105,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(loggerMw);
 
+app.use("/", (_req, res) => {
+    return res.send("Server is Up.");
+});
+
 app.use("/api", apiRouter);
 app.use("/static/files", express.static(path.join(__dirname, "..", "public")));
 

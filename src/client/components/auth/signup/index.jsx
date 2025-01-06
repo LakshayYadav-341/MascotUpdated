@@ -1,129 +1,123 @@
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import TextField from '@mui/material/TextField';
-import * as React from 'react';
-import { useState } from 'react';
-// import Link from '@mui/material/Link';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Radio from '@mui/material/Radio';
-import Typography from '@mui/material/Typography';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Radio from "@mui/material/Radio";
+import Typography from "@mui/material/Typography";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+
+import urls, { basePath } from "../../../../utils/urls";
+import Details from "../../details";
 import classes from "./styles.module.scss";
 
-
-import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
-import urls, { basePath } from '../../../../utils/urls';
-import Details from '../../details';
-import { selectCreatedUser } from '../authSlice';
-
 export default function SignUp() {
-  const [credential, setCredential] = useState({})
-  const [credentialAdded, setCredentialAdded] = useState(false)
-  const [email, setEmail] = useState("")
+  const [credential, setCredential] = useState({});
+  const [credentialAdded, setCredentialAdded] = useState(false);
+  const [email, setEmail] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(true);
+  const [selectedValue, setSelectedValue] = useState("student");
 
   const handleEmailBlur = () => {
-    setIsEmailValid(email === '' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
-  };
-
-  const dispatch = useDispatch();
-  const user = useSelector(selectCreatedUser);
-  const [selectedValue, setSelectedValue] = useState('student');
-  // const {data: userData} = useGetter(basePath+urls.auth.getUserByEmail.replace(":email", "hello@gmail.com"))
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const email = data.get('email')
-    let res;
-    try {
-      res = await axios.get(basePath + urls.auth.getUserByEmail.replace(":email", email))
-    } catch (error) {
-      if (error.response) {
-        res = error.response;
-      } else {
-        return toast.error("An Unexpected error occured! Please try again later.")
-      }
-    }
-
-    if(res.status === 500)
-      return toast.error("An Unexpected error occured! Please try again later.")
-
-    else if (res && res.status === 404) {
-      const password = data.get('password')
-      // const hashed = await Hash.create(password)
-      setCredential({
-        email,
-        password,
-        role: selectedValue,
-      })
-      setCredentialAdded(true)
-      toast.success("Credentials Added Successfully")
-    }
-    else {
-      toast.error("This Email has been already taken!!")
-    }
+    setIsEmailValid(email === "" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
   };
 
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
   };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!isEmailValid || email === "") {
+      return toast.error("Please enter a valid email address!");
+    }
+
+    const data = new FormData(event.currentTarget);
+    const password = data.get("password");
+
+    try {
+      const res = await axios.get(
+        basePath + urls.auth.getUserByEmail.replace(":email", email)
+      );
+
+      if (res && res.status === 200) {
+        return toast.error("This email has already been taken!");
+      }
+    } catch (error) {
+      if (error.response?.status === 404) {
+        setCredential({ email, password, role: selectedValue });
+        setCredentialAdded(true);
+        return toast.success("Credentials added successfully!");
+      } else {
+        return toast.error("An unexpected error occurred. Please try again!");
+      }
+    }
+  };
+
   return (
     <>
       {credentialAdded && <Details credential={credential} />}
-      {!credentialAdded &&
+      {!credentialAdded && (
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <Box
             className={classes.box}
             sx={{
               marginTop: 8,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
+            <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
               Sign up
             </Typography>
-            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, color: 'white' }}>
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              noValidate
+              sx={{ mt: 1 }}
+            >
               <TextField
                 margin="normal"
                 required
                 fullWidth
                 id="email"
                 label="Email Address"
-                type="email"
                 name="email"
                 autoComplete="email"
                 autoFocus
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onBlur={handleEmailBlur}
-                inputProps={{ pattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$' }}
                 error={!isEmailValid}
-                helperText={!isEmailValid ? 'Invalid email address' : ''}
+                helperText={!isEmailValid ? "Invalid email address" : ""}
                 sx={{
-                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white"
+                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                  {
+                    borderColor: "white",
                   },
-                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-                    color: "white"
+                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input":
+                  {
+                    color: "white",
                   },
                   "& .MuiInputLabel-outlined.Mui-focused": {
-                    color: "white"
+                    color: "white",
                   },
                   "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white"
+                    borderColor: "white",
                   },
                 }}
               />
@@ -137,27 +131,23 @@ export default function SignUp() {
                 id="password"
                 autoComplete="current-password"
                 sx={{
-                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white"
+                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                  {
+                    borderColor: "white",
                   },
-                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-                    color: "white"
+                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input":
+                  {
+                    color: "white",
                   },
                   "& .MuiInputLabel-outlined.Mui-focused": {
-                    color: "white"
+                    color: "white",
                   },
                   "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white"
+                    borderColor: "white",
                   },
                 }}
               />
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  paddingTop: "1rem"
-                }}
-              >
+              <div style={{ display: "flex", flexDirection: "column", paddingTop: "1rem" }}>
                 <Typography component="h4" variant="h6">
                   Select your role
                 </Typography>
@@ -165,43 +155,42 @@ export default function SignUp() {
                   control={<Radio />}
                   label="Student"
                   value="student"
-                  checked={selectedValue === 'student'}
+                  checked={selectedValue === "student"}
                   onChange={handleChange}
                 />
                 <FormControlLabel
                   control={<Radio />}
                   label="Alumni"
                   value="alumni"
-                  checked={selectedValue === 'alumni'}
+                  checked={selectedValue === "alumni"}
                   onChange={handleChange}
                 />
-                <FormControlLabel
+                {/* <FormControlLabel
                   control={<Radio />}
                   label="Institute Admin"
                   value="institute"
                   checked={selectedValue === 'institute'}
                   onChange={handleChange}
                 />
+                <FormControlLabel
+                  control={<Radio />}
+                  label="Admin"
+                  value="admin"
+                  checked={selectedValue === 'admin'}
+                  onChange={handleChange}
+                /> */}
               </div>
-              {/* <FormControlLabel
-          control={<Radio />}
-          label="Admin"
-          value="admin"
-          checked={selectedValue === 'admin'}
-          onChange={handleChange}
-        /> */}
-              {/* {error.length > 0 && <Typography variant="body2" color="error">
-              {error}
-              </Typography>} */}
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 disabled={!isEmailValid}
                 sx={{
-                  mt: 3, mb: 2, "&.MuiButton-root:hover": {
-                    borderColor: '#1565c0',
-                    bgcolor: '#1565c0',
+                  mt: 3,
+                  mb: 2,
+                  "&.MuiButton-root:hover": {
+                    borderColor: "#1565c0",
+                    bgcolor: "#1565c0",
                   },
                 }}
               >
@@ -209,16 +198,13 @@ export default function SignUp() {
               </Button>
               <Grid container>
                 <Grid item>
-                  <Link to="/signin" >
-                    {"Already have an account? Login here"}
-                  </Link>
+                  <Link to="/signin">{"Already have an account? Login here"}</Link>
                 </Grid>
               </Grid>
             </Box>
           </Box>
-          {/* <Copyright sx={{ mt: 8, mb: 4 }} /> */}
         </Container>
-      }
+      )}
     </>
   );
 }

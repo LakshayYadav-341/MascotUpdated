@@ -89,19 +89,15 @@ export default function PrimarySearchAppBar() {
   const placeholder =
     location.pathname === "/chat" ? "Search people to chat" : "Search…";
 
-  // Handle mousedown on the document body
   const handleDocumentClick = (event) => {
     if (
       searchInputRef.current &&
       !searchInputRef.current.contains(event.target)
     ) {
-      // Clicked outside the search input
-      // setSearchResults([]);
       setBlur(true);
     }
   };
 
-  // Attach mousedown event listener to the document body
   useEffect(() => {
     document.body.addEventListener("mousedown", handleDocumentClick);
     return () => {
@@ -364,9 +360,7 @@ export default function PrimarySearchAppBar() {
                 aria-label="show 4 new connection"
                 color="inherit"
               >
-                {/* <Badge badgeContent={4} color="error"> */}
                 <PeopleAltIcon />
-                {/* </Badge> */}
               </IconButton>
             </Link>
             {!Object.keys(user).includes("admin") && (
@@ -376,9 +370,7 @@ export default function PrimarySearchAppBar() {
                   aria-label="show 4 new Jobs"
                   color="inherit"
                 >
-                  {/* <Badge badgeContent={4} color="error"> */}
                   <WorkIcon />
-                  {/* </Badge> */}
                 </IconButton>
               </Link>
             )}
@@ -388,20 +380,9 @@ export default function PrimarySearchAppBar() {
                 aria-label="show 4 new mails"
                 color="inherit"
               >
-                {/* <Badge badgeContent={4} color="error"> */}
                 <MailIcon />
-                {/* </Badge> */}
               </IconButton>
             </Link>
-            {/* <Link to={'/notifications'}>
-                            <IconButton
-                                size="large"
-                                aria-label="show 17 new notifications"
-                                color="inherit"
-                            >
-                                <NotificationsIcon />
-                            </IconButton>
-                        </Link> */}
             <IconButton
               size="large"
               edge="end"

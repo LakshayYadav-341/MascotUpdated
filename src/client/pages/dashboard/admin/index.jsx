@@ -15,10 +15,13 @@ import AdminUserUpdate from "../../../components/updateByAdmin";
 import ReportedUser from "../../../components/reported-user";
 import ReportedPost from "@client/components/posts/reported-post";
 import InstituteAdminHandleuser from "../../../components/updateByAdmin/InstituteAdminHandleUser";
+import { basePath } from "../../../../utils/urls";
+import urls from "../../../../utils/urls";
+import { useGetter } from "../../../hooks/fetcher";
 
 const panels = {
-    // "Institutes": <Institute />,
-    // "Alumni Approval": <AlumniRequest></AlumniRequest>,
+    "Institutes": <Institute />,
+    "Alumni Approval": <AlumniRequest></AlumniRequest>,
     "Manage Users": <AdminUserUpdate></AdminUserUpdate>,
     "Reported Users": <ReportedUser></ReportedUser>,
     "Reported Posts": <ReportedPost></ReportedPost>,
@@ -37,17 +40,19 @@ export default function Page() {
     const [value2, setValue2] = useState(Object.keys(panels2)[0])
     const handleChangeValue2 = (_, _new) => setValue2(_new)
     const user = useSelector(selectLoggedInUser)
+    const profileUrl = basePath + urls.user.profile.get.replace(':id', user)
+    const { data: tempUser, mutate: tempUserMutate, isLoading } = useGetter(profileUrl)
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (!Object.keys(user).includes("admin")) {
+        if (tempUser && tempUser?.data?.role !=="admin") {
             navigate("/home")
         }
-    }, [user])
+    }, [tempUser])
 
     return (
         <Box sx={{ width: '100%', typography: 'h2', marginTop: "4.5rem" }}>
-            {user?.admin?.role === "system" ? <TabContext value={value}>
+            {tempUser&&tempUser.data.role === "admin" ? <TabContext value={value}>
                 <Box
                     sx={{
                         borderBottom: 1,

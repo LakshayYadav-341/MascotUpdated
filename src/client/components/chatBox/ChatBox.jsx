@@ -89,9 +89,7 @@ const ChatBox = ({ chat, currentUser, setSendMessage, receivedMessage }) => {
     }
   };
 
-  // Receive Message from parent component
   useEffect(() => {
-    console.log("Message Arrived: ", receivedMessage);
     if (receivedMessage !== null && receivedMessage.chatId === chat._id) {
       setMessages([...messages, receivedMessage]);
     }
@@ -159,7 +157,6 @@ const ChatBox = ({ chat, currentUser, setSendMessage, receivedMessage }) => {
                 </span>
               )}
             </div>
-            {/* chat-sender */}
             <div className="chat-sender">
               <div onClick={() => imageRef.current.click()}>+</div>
               <InputEmoji value={newMessage} onChange={handleChange} />
@@ -170,9 +167,6 @@ const ChatBox = ({ chat, currentUser, setSendMessage, receivedMessage }) => {
               >
                 Send
               </div>
-              {/* <div id="send-btn" onClick={handleSend}>
-                <i className="fa-sharp fa-solid fa-paper-plane"></i> Send
-              </div> */}
               <input
                 type="file"
                 name=""

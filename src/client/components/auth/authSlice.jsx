@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 const initialState = {
   isUserCreated: false,
-  loggedInUser: JSON.parse(localStorage.getItem('session')) || null,
+  loggedInUser: JSON.parse(localStorage.getItem("session")) || null,
   updatedLoggedInUser: null,
   createdUser: null,
   status: "idle",
@@ -16,13 +16,12 @@ export const createUserAsync = createAsyncThunk(
   "user/createUser",
   async (userData) => {
     const response = await createUser(userData);
-    // The value we return becomes the `fulfilled` action payload
     return response.data;
   }
 );
 
 export const updateUserAsync = createAsyncThunk(
-  'user/updateUser',
+  "user/updateUser",
   async (update) => {
     const response = await updateUser(update);
     return response.data;
@@ -30,37 +29,33 @@ export const updateUserAsync = createAsyncThunk(
 );
 
 export const updateLoggedInUserAsync = createAsyncThunk(
-  'user/updateLoggedInuser',
-  async()=>{
+  "user/updateLoggedInuser",
+  async () => {
     const res = await updateLoggedInUser();
-    // console.log(res.data);
     return res.data;
   }
-)
+);
 
 export const checkUserAsync = createAsyncThunk(
   "user/checkUser",
   async (loginInfo) => {
     const response = await checkUser(loginInfo);
-    // The value we return becomes the `fulfilled` action payload
-    if(response?.status === "success"){
-      toast.success("Logged In Successfully")
+    if (response?.status === "success") {
+      toast.success("Logged In Successfully");
     }
     return response.data;
   }
 );
 
 export const signOutAsync = createAsyncThunk(
-  'user/signOut',
+  "user/signOut",
   async (loginInfo) => {
     const response = await signOut(loginInfo);
-    if(response?.data === "success"){
-      toast.success("Logged Out Successfully")
+    if (response?.data === "success") {
+      toast.success("Logged Out Successfully");
+    } else {
+      toast.error("Something went wrong!!");
     }
-    else{
-      toast.error("Something went wrong!!")
-    }
-    // The value we return becomes the `fulfilled` action payload
     return response.data;
   }
 );
@@ -68,7 +63,11 @@ export const signOutAsync = createAsyncThunk(
 export const authSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    resetUserCreationState: (state) => {
+      state.isUserCreated = false; // Reset the flag
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createUserAsync.pending, (state) => {
@@ -77,55 +76,58 @@ export const authSlice = createSlice({
       .addCase(createUserAsync.fulfilled, (state, action) => {
         state.status = "idle";
         state.createdUser = action.payload;
-        state.isUserCreated = true;
-        toast.success("Account Created Successfully")
+        state.isUserCreated = true; // Set the flag to true
+        toast.success("Account Created Successfully");
       })
-      .addCase(createUserAsync.rejected, (state, action) => {
-        state.status = "idle"
-        toast.error("Something went wrong")
+      .addCase(createUserAsync.rejected, (state) => {
+        state.status = "idle";
+        toast.error("Something went wrong");
       })
       .addCase(checkUserAsync.pending, (state) => {
         state.status = "loading";
       })
       .addCase(checkUserAsync.fulfilled, (state, action) => {
         state.status = "idle";
-        state.error = null
-        localStorage.removeItem("session")
-        localStorage.setItem("session", JSON.stringify(action.payload))
+        state.error = null;
+        localStorage.removeItem("session");
+        localStorage.setItem("session", JSON.stringify(action.payload));
         state.loggedInUser = action.payload;
       })
       .addCase(checkUserAsync.rejected, (state, action) => {
         state.status = "idle";
         state.error = action.error;
-        toast.error("Wrong Credentials")
+        toast.error("Wrong Credentials");
       })
       .addCase(updateUserAsync.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
       .addCase(updateUserAsync.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.status = "idle";
         state.createdUser = action.payload;
       })
-      .addCase(updateLoggedInUserAsync.pending,(state) => {
-        state.status = 'loading';
+      .addCase(updateLoggedInUserAsync.pending, (state) => {
+        state.status = "loading";
       })
-      .addCase(updateLoggedInUserAsync.fulfilled, (state, action)=>{
+      .addCase(updateLoggedInUserAsync.fulfilled, (state, action) => {
         state.status = "idle";
         state.updatedLoggedInUser = action.payload;
       })
       .addCase(signOutAsync.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
       .addCase(signOutAsync.fulfilled, (state) => {
-        state.status = 'idle';
-        localStorage.removeItem("session")
+        state.status = "idle";
+        localStorage.removeItem("session");
         state.loggedInUser = null;
         state.updatedLoggedInUser = null;
         state.createdUser = null;
-      })
-
+      });
   },
 });
+
+export const {
+  resetUserCreationState, // Export the new reducer
+} = authSlice.actions;
 
 export const selectLoggedInUser = (state) => state.auth.loggedInUser?.user;
 export const selectSession = (state) => state.auth.loggedInUser;
@@ -133,7 +135,5 @@ export const selectCreatedUser = (state) => state.auth.createdUser;
 export const selectError = (state) => state.auth.error;
 export const selectUserCreated = (state) => state.auth.isUserCreated;
 export const selectLoginStatus = (state) => state.auth.status;
-
-// export const { } = authSlice.actions;
 
 export default authSlice.reducer;

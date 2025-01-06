@@ -98,7 +98,7 @@ export default function Page() {
         })
         if (res?.status === 200) {
             toast.success("Added Institute Successfully")
-            navigate(`/profile/${session?.user?.profile?._id}`)
+            navigate(`/profile/${session?.user}`)
         }
         else {
             toast.error("Something went wrong!!")

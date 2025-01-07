@@ -25,14 +25,14 @@ app.post(
 
             // Create the address
             const address = await Address.create(req.body.address);
-            if (!address) {
+            if (!address || !req.body.contact) {
                 return res.status(400).send(handler.error("Failed to create address."));
             }
 
             // Create the institute
             const institute = await Institute.create({
                 name: getValue(keys, values, "name"),
-                contact: req.body.contact,
+                contact: req?.body?.contact,
                 admin: user._id,
                 address: address._id,
                 ...(keys.includes("faculty") && { faculty: getValue(keys, values, "faculty") }),

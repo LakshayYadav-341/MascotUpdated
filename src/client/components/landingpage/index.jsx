@@ -9,226 +9,142 @@ import ProfileDataImg from "../../assets/images/Profile data-amico.png"
 
 const Landing = () => {
   return (
-    <div>
-      <nav className="navbar navbar-expand-lg">
-        <div className="container custom-container">
-          <div className="custom-brand">
-            <Link to="#" className="navbar-brand">
-              <img src={logo} alt="mascot" className="logoImg" />
-            </Link>
-            <form
-              className="d-flex justify-content-center align-items-center form-inline my-2 my-lg-0 form-explore mr-auto"
-              role="search"
-              style={{ gap: "0.3rem" }}
-            >
-              <input
-                className="form-control mr-sm-2"
-                type="search"
-                placeholder="#Explore"
-                aria-label="Search"
-              />
-              <button className="btn btn-outline-success" type="submit">
-                Search
-              </button>
-            </form>
-          </div>
-          <button
-            className="navbar-toggler togglerButton"
-            type="button"
-            data-bs-toggle="offcanvas"
-            data-bs-target="#navbarOffcanvas"
-            aria-controls="navbarOffcanvas"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-
-          <div
-            className="offcanvas offcanvas-end bg-secondary canvas-color"
-            id="navbarOffcanvas"
-            aria-labelledby="offcanvasNavbarLabel"
-          >
-            <div className="offcanvas-header">
-              <h5
-                className="offcanvas-title text-light"
-                id="offcanvasNavbarLabel"
-              >
-                Mascot
-              </h5>
-              <button
-                type="button"
-                className="btn-close btn-close-white text-reset"
-                data-bs-dismiss="offcanvas"
-                aria-label="Close"
-              ></button>
+    <div className="mt-[-5rem] min-h-screen bg-gray-900 text-gray-100">
+      {/* Navbar */}
+      <nav className="bg-gray-800 py-4">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Link to="#" className="flex items-center">
+                <img src={logo} alt="mascot" className="h-8 w-auto" />
+              </Link>
+              <form className="hidden md:flex items-center">
+                <input
+                  type="search"
+                  placeholder="#Explore"
+                  className="px-4 py-2 bg-gray-700 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button className="px-4 py-2 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700 transition-colors">
+                  Search
+                </button>
+              </form>
             </div>
-            <div className="offcanvas-body">
-              <div
-                className="navbar-nav justify-content-end flex-grow-1 pe-3"
-                style={{ gap: "0.5rem" }}
-              >
-                <Link className="nav-item nav-link" to="/login">
-                  <i className="fa-regular fa-compass"></i> Discover
-                </Link>
-                <Link className="nav-item nav-link" to="/login">
-                  <i className="fa-solid fa-user-group"></i> People
-                </Link>
-                <Link className="nav-item nav-link" to="/login">
-                  <i className="fa-brands fa-youtube"></i> Learning
-                </Link>
-                <Link className="nav-item nav-link" to="/login">
-                  <i className="fa-solid fa-briefcase"></i> Jobs
-                </Link>
-                <div style={{ display: "flex", gap: "0.5rem" }}>
-                  <Link to="/signin">
-                    <button type="button" className="btn btn-info">
-                      Login
-                    </button>
-                  </Link>
-                </div>
-              </div>
+
+            {/* Mobile menu button */}
+            <button className="md:hidden p-2 rounded-lg hover:bg-gray-700">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-6">
+              <Link to="/signin">
+                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  Login
+                </button>
+              </Link>
+              <Link to="/signup" className="flex items-center space-x-2 hover:text-blue-400 transition-colors">
+                <i className="fa-regular fa-compass"></i>
+                <span>SignUp</span>
+              </Link>
             </div>
           </div>
         </div>
       </nav>
 
-      <main
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "5rem",
-          width: "70%",
-          margin: "0 auto",
-          marginBottom: "1rem",
-          color: "white",
-        }}
-      >
-        <div className="card landCard">
-          <div style={{ width: "50%" }} className="container--main--index">
-            <h1>Welcome to your professional community</h1>
-            <div>
-              Mascot is a social media platform designed for professional
-              networking, job searching, and career development. Its main purpose
-              is to connect professionals from all industries and provide a
-              platform for them to showcase their skills, experiences, and
-              accomplishments.
-              <br />
-              <br />
-              Mascot serves as a valuable tool for professionals to build
-              their personal brand, expand their network, and find new career
-              opportunities.
-            </div>
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8 space-y-20">
+        {/* Hero Section */}
+        <div className="flex flex-col md:flex-row items-center justify-between bg-gray-800 rounded-xl p-8">
+          <div className="md:w-1/2 space-y-4">
+            <h1 className="text-4xl font-bold">Welcome to your professional community</h1>
+            <p className="text-gray-300">
+              Mascot is a social media platform designed for professional networking, job searching, and career development. Its main purpose is to connect professionals from all industries and provide a platform for them to showcase their skills, experiences, and accomplishments.
+            </p>
+            <p className="text-gray-300">
+              Mascot serves as a valuable tool for professionals to build their personal brand, expand their network, and find new career opportunities.
+            </p>
           </div>
-          <div className="imgSide">
-            <img
-              src={discussionImg}
-              alt="randomImg"
-              width="400px"
-              height="400px"
-            />
+          <div className="md:w-1/2 mt-8 md:mt-0">
+            <img src={discussionImg} alt="Discussion" className="w-full max-w-md mx-auto" />
           </div>
         </div>
-        <div className="landCard">
+
+        {/* Job Search Section */}
+        <div className="bg-gray-800 rounded-xl p-8 space-y-6">
+          <h2 className="text-3xl font-bold">Find the right job or internship for you</h2>
           <div>
-            <h1>Find the right job or internship for you</h1>
-          </div>
-          <div>
-            <h3 style={{ marginBottom: "1rem" }}>Suggested Searches</h3>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                gap: "1rem",
-                flexWrap: "wrap",
-              }}
-            >
-              <button className="filled-button">Engineering</button>
-              <button className="filled-button">Full stack developer</button>
-              <button className="filled-button">Backend developer</button>
-              <button className="filled-button">Frontend developer</button>
-              <button className="filled-button">Android developer</button>
-              <button className="filled-button">Software Engineer</button>
-              <button className="filled-button">Finance</button>
-              <button className="filled-button">Business Development</button>
-              <button className="filled-button">Operations</button>
-              <button className="filled-button">Human Resources</button>
+            <h3 className="text-xl mb-4">Suggested Searches</h3>
+            <div className="flex flex-wrap gap-3">
+              {["Engineering", "Full stack developer", "Backend developer", "Frontend developer", 
+                "Android developer", "Software Engineer", "Finance", "Business Development", 
+                "Operations", "Human Resources"].map((item) => (
+                <button key={item} className="px-4 py-2 bg-gray-700 rounded-full hover:bg-gray-600 transition-colors">
+                  {item}
+                </button>
+              ))}
             </div>
           </div>
         </div>
-        <div className="landCard card">
-          <div style={{ width: "70%" }} className="container--main--index">
-            <h2 style={{ marginBottom: "1rem" }}>
-              Conversations today could lead to opportunity tomorrow
-            </h2>
-            Sending messages to people you know is a great way to strengthen
-            relationships as you take the next step in your career.
+
+        {/* Conversation Section */}
+        <div className="flex flex-col md:flex-row items-center justify-between bg-gray-800 rounded-xl p-8">
+          <div className="md:w-2/3 space-y-4">
+            <h2 className="text-3xl font-bold">Conversations today could lead to opportunity tomorrow</h2>
+            <p className="text-gray-300">
+              Sending messages to people you know is a great way to strengthen relationships as you take the next step in your career.
+            </p>
           </div>
-          <div className="imgSide">
-            <img
-              src={metricsImg}
-              alt="randomImg"
-              width="300px"
-              height="300px"
-            />
+          <div className="md:w-1/3 mt-8 md:mt-0">
+            <img src={metricsImg} alt="Metrics" className="w-full max-w-sm mx-auto" />
           </div>
         </div>
-        <div className="landCard">
-          <div className="landHelp card">
-            <div className="imgCol">
-              <img
-                src={HelpingPartnerImg}
-                alt="randomImg"
-                style={{ width: "100%" }}
-              />
+
+        {/* Features Grid */}
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="bg-gray-800 rounded-xl p-8 text-center space-y-4">
+            <div className="w-full max-w-xs mx-auto">
+              <img src={HelpingPartnerImg} alt="Help" className="w-full" />
             </div>
-            <h3>Connect with people who can help</h3>
-            <button className="filled-button">Find People you know</button>
+            <h3 className="text-2xl font-bold">Connect with people who can help</h3>
+            <button className="px-6 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+              Find People you know
+            </button>
           </div>
-          <div className="landHelp card">
-            <div className="imgCol">
-              <img
-                src={WorkingImg}
-                alt="randomImg"
-                style={{ width: "100%" }}
-              />
+          <div className="bg-gray-800 rounded-xl p-8 text-center space-y-4">
+            <div className="w-full max-w-xs mx-auto">
+              <img src={WorkingImg} alt="Learning" className="w-full" />
             </div>
-            <h3>Learn the skills you need to succeed</h3>
-            <button className="filled-button">Learn</button>
+            <h3 className="text-2xl font-bold">Learn the skills you need to succeed</h3>
+            <button className="px-6 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+              Learn
+            </button>
           </div>
         </div>
-        <div className="landCard">
-          <div className="landHelp">
-            <h1>Who is Mascot for?</h1>
-            <h2>
-              Any student who wants to navigate to their professional life
-            </h2>
-            <div
-              className="card"
-              style={{ boxShadow: "4px 4px 5px 1px black", cursor: "pointer" }}
-            >
-              Find a coworker, colleague or classmate
-            </div>
-            <div
-              className="card"
-              style={{ boxShadow: "4px 4px 5px 1px black", cursor: "pointer" }}
-            >
-              Find an internship
-            </div>
-            <div
-              className="card"
-              style={{ boxShadow: "4px 4px 5px 1px black", cursor: "pointer" }}
-            >
-              Find a job & referrals
+
+        {/* Who is it for Section */}
+        <div className="flex flex-col md:flex-row items-center justify-between bg-gray-800 rounded-xl p-8">
+          <div className="md:w-1/2 space-y-6">
+            <h2 className="text-4xl font-bold">Who is Mascot for?</h2>
+            <h3 className="text-2xl">Any student who wants to navigate to their professional life</h3>
+            <div className="space-y-4">
+              {["Find a coworker, colleague or classmate", "Find an internship", "Find a job & referrals"].map((item) => (
+                <div key={item} className="p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors cursor-pointer">
+                  {item}
+                </div>
+              ))}
             </div>
           </div>
-          <div className="imgSide">
-            <img src={ProfileDataImg} alt="randomImg" />
+          <div className="md:w-1/2 mt-8 md:mt-0">
+            <img src={ProfileDataImg} alt="Profile" className="w-full max-w-md mx-auto" />
           </div>
         </div>
       </main>
-      <footer className="landFooter">
-        <p>Mascot &copy; 2023. All rights reserved</p>
+
+      {/* Footer */}
+      <footer className="bg-gray-800 py-4 text-center">
+        <p className="text-gray-400">Mascot &copy; 2023. All rights reserved</p>
       </footer>
     </div>
   );

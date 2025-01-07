@@ -144,7 +144,7 @@ export default function SignUp() {
                     />
                     <span className="text-gray-400">Institute Admin</span>
                   </label>
-                  <label className="flex items-center space-x-2">
+                  {/* <label className="flex items-center space-x-2">
                     <input
                       type="radio"
                       value="admin"
@@ -153,7 +153,7 @@ export default function SignUp() {
                       className="form-radio text-blue-500"
                     />
                     <span className="text-gray-400">Admin</span>
-                  </label>
+                  </label> */}
                 </div>
               </div>
               <button

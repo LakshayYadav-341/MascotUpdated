@@ -76,7 +76,7 @@ const ReportedPost = () => {
     }
   };
 
-  const uniquePosts = reportedPostData?.data?.reduce((unique, report) => {
+  const uniquePosts = reportedPostData?.status!==403 && reportedPostData?.data?.reduce((unique, report) => {
     const existing = unique.find((item) => item.post?._id === report.post?._id);
     if (!existing) {
       unique.push(report);
@@ -205,7 +205,7 @@ const ReportedPost = () => {
       </div>
 
       {/* Modals */}
-      {uniquePosts?.map((report, id) => (
+      {uniquePosts && uniquePosts?.map((report, id) => (
         <div
           key={id}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"

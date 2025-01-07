@@ -354,13 +354,7 @@ const ProfileComponent = () => {
                     <DialogHeader>
                         <DialogTitle>Complete your profile</DialogTitle>
                     </DialogHeader>
-                    <CompleteProfile />
-                    <div className="flex justify-end gap-4">
-                        <Button variant="outline" onClick={() => setShowAddressModal(false)}>
-                            Cancel
-                        </Button>
-                        <Button onClick={handleSubmit}>Submit</Button>
-                    </div>
+                    <CompleteProfile onSubmit={handleSubmit} />
                 </DialogContent>
             </Dialog>
 

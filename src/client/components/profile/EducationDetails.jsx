@@ -5,10 +5,10 @@ const EducationDetails = ({ isAdmin, hasProfile, education = [], others, onAddEd
   if (isAdmin || !hasProfile) {
     return null;
   }
-
   const formatDate = (date) => {
-    // Add your date formatting logic here
-    return date; // Placeholder return
+    if (!date) return "Unknown"; // Handle undefined/null dates gracefully
+    const options = { year: "numeric", month: "long" }; // Customize the format
+    return new Date(date).toLocaleDateString(undefined, options);
   };
 
   return (

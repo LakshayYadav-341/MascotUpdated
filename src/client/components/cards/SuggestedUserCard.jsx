@@ -52,33 +52,30 @@ const SuggestedUserCard = (props) => {
     }
 
     return (
-        <>
-            <div className="card profileCard suggestedCard" key={props.user?._id}>
-                <div className="cover"></div>
-                <Link to={`/profile/${props.user?._id}`} style={{ zIndex: "2" }}>
-                    <div className="profileInfo">
+        <div className="bg-gray-800 rounded-lg border border-gray-700 p-4 md:p-6 lg:p-8 flex flex-col items-center justify-between w-[14rem]">
+            <div className="w-full">
+                <Link to={`/profile/${props.user?._id}`} className="block">
+                    <div className="flex flex-col items-center">
                         <img
                             src={props?.user?.profilePhoto ? (serverPath + props.user?.profilePhoto) : tempImage}
                             alt="profileImg"
-                            className="profileImg"
+                            className="w-24 h-24 rounded-full object-cover mb-4"
                         />
-                        <strong className="userName">{props.user?.name.first} {props.user?.name.last}</strong>
-                        <small className="userProfession">{props.user?.bio}</small>
+                        <h3 className="text-lg font-bold text-gray-300 mb-1">{props.user?.name.first} {props.user?.name.last}</h3>
+                        <p className="text-gray-400 mb-4">{props.user?.bio}</p>
                     </div>
                 </Link>
-                <div>
-                    <button 
-                        className={`text-button ${isLoading ? 'disabled' : ''}`}
-                        type='button' 
-                        onClick={clickHandler}
-                        disabled={isLoading}
-                    >
-                        <i className="fa-solid fa-user-plus"></i>
-                        {isLoading ? ' Connecting...' : ' Connect'}
-                    </button>
-                </div>
             </div>
-        </>
+            <button
+                className={`bg-blue-500 hover:bg-blue-600 text-gray-300 font-bold py-2 px-4 rounded-lg transition-colors duration-300 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                type='button'
+                onClick={clickHandler}
+                disabled={isLoading}
+            >
+                <i className="fa-solid fa-user-plus mr-2"></i>
+                {isLoading ? 'Connecting...' : 'Connect'}
+            </button>
+        </div>
     )
 }
 

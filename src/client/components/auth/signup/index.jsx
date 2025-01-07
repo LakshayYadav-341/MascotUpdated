@@ -2,22 +2,8 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import Radio from "@mui/material/Radio";
-import Typography from "@mui/material/Typography";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-
 import urls, { basePath } from "../../../../utils/urls";
 import Details from "../../details";
-import classes from "./styles.module.scss";
 
 export default function SignUp() {
   const [credential, setCredential] = useState({});
@@ -67,143 +53,127 @@ export default function SignUp() {
     <>
       {credentialAdded && <Details credential={credential} />}
       {!credentialAdded && (
-        <Container component="main" maxWidth="xs">
-          <CssBaseline />
-          <Box
-            className={classes.box}
-            sx={{
-              marginTop: 8,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign up
-            </Typography>
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
-              noValidate
-              sx={{ mt: 1 }}
-            >
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onBlur={handleEmailBlur}
-                error={!isEmailValid}
-                helperText={!isEmailValid ? "Invalid email address" : ""}
-                sx={{
-                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-                  {
-                    borderColor: "white",
-                  },
-                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input":
-                  {
-                    color: "white",
-                  },
-                  "& .MuiInputLabel-outlined.Mui-focused": {
-                    color: "white",
-                  },
-                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white",
-                  },
-                }}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                sx={{
-                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-                  {
-                    borderColor: "white",
-                  },
-                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input":
-                  {
-                    color: "white",
-                  },
-                  "& .MuiInputLabel-outlined.Mui-focused": {
-                    color: "white",
-                  },
-                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white",
-                  },
-                }}
-              />
-              <div style={{ display: "flex", flexDirection: "column", paddingTop: "1rem" }}>
-                <Typography component="h4" variant="h6">
-                  Select your role
-                </Typography>
-                <FormControlLabel
-                  control={<Radio />}
-                  label="Student"
-                  value="student"
-                  checked={selectedValue === "student"}
-                  onChange={handleChange}
-                />
-                <FormControlLabel
-                  control={<Radio />}
-                  label="Alumni"
-                  value="alumni"
-                  checked={selectedValue === "alumni"}
-                  onChange={handleChange}
-                />
-                {/* <FormControlLabel
-                  control={<Radio />}
-                  label="Institute Admin"
-                  value="institute"
-                  checked={selectedValue === 'institute'}
-                  onChange={handleChange}
-                />
-                <FormControlLabel
-                  control={<Radio />}
-                  label="Admin"
-                  value="admin"
-                  checked={selectedValue === 'admin'}
-                  onChange={handleChange}
-                /> */}
+        <div className="h-full flex items-center justify-center bg-gray-900">
+          <div className="w-full max-w-lg p-6 bg-gray-800 rounded-lg shadow-md">
+            <div className="flex flex-col items-center mb-6">
+              <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-600">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-8 w-8 text-gray-300"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 11c1.656 0 3-1.344 3-3s-1.344-3-3-3-3 1.344-3 3 1.344 3 3 3zm0 0c-2.667 0-8 1.333-8 4v2h16v-2c0-2.667-5.333-4-8-4z"
+                  />
+                </svg>
               </div>
-              <Button
+              <h1 className="text-gray-300 text-2xl font-semibold mt-4">Sign Up</h1>
+            </div>
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div>
+                <label htmlFor="email" className="text-gray-400 text-sm">
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onBlur={handleEmailBlur}
+                  required
+                  className={`mt-1 block w-full rounded-md bg-gray-700 border ${
+                    !isEmailValid
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-gray-600 focus:border-blue-500"
+                  } text-gray-300 px-3 py-2 focus:ring-blue-500`}
+                />
+                {!isEmailValid && (
+                  <p className="text-red-500 text-sm mt-1">Invalid email address</p>
+                )}
+              </div>
+              <div>
+                <label htmlFor="password" className="text-gray-400 text-sm">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  className="mt-1 block w-full rounded-md bg-gray-700 border border-gray-600 text-gray-300 px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div className="mt-4">
+                <h3 className="text-gray-400 text-sm font-medium mb-2">
+                  Select Your Role
+                </h3>
+                <div className="space-y-2">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      value="student"
+                      checked={selectedValue === "student"}
+                      onChange={handleChange}
+                      className="form-radio text-blue-500"
+                    />
+                    <span className="text-gray-400">Student</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      value="alumni"
+                      checked={selectedValue === "alumni"}
+                      onChange={handleChange}
+                      className="form-radio text-blue-500"
+                    />
+                    <span className="text-gray-400">Alumni</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      value="institute"
+                      checked={selectedValue === "institute"}
+                      onChange={handleChange}
+                      className="form-radio text-blue-500"
+                    />
+                    <span className="text-gray-400">Institute Admin</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      value="admin"
+                      checked={selectedValue === "admin"}
+                      onChange={handleChange}
+                      className="form-radio text-blue-500"
+                    />
+                    <span className="text-gray-400">Admin</span>
+                  </label>
+                </div>
+              </div>
+              <button
                 type="submit"
-                fullWidth
-                variant="contained"
                 disabled={!isEmailValid}
-                sx={{
-                  mt: 3,
-                  mb: 2,
-                  "&.MuiButton-root:hover": {
-                    borderColor: "#1565c0",
-                    bgcolor: "#1565c0",
-                  },
-                }}
+                className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-gray-300 rounded-md font-semibold disabled:opacity-50"
               >
                 Sign Up
-              </Button>
-              <Grid container>
-                <Grid item>
-                  <Link to="/signin">{"Already have an account? Login here"}</Link>
-                </Grid>
-              </Grid>
-            </Box>
-          </Box>
-        </Container>
+              </button>
+              <div className="text-center mt-4">
+                <Link
+                  to="/signin"
+                  className="text-sm text-gray-400 hover:text-blue-400"
+                >
+                  Already have an account? Login here
+                </Link>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </>
   );

@@ -1,102 +1,177 @@
-import tempImage from "@client/assets/images/profile.png";
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
-import { Autocomplete, Box, Chip, FormControl, FormControlLabel, ImageList, ImageListItem, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField } from '@mui/material';
-import urls, { basePath, serverPath } from '@utils/urls';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Link, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useFormik } from "formik";
-import React, { useEffect, useState } from 'react';
-import { FormLabel, Stack } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
+
 import { useGetter, usePutter } from '@client/hooks/fetcher';
 import { selectSession } from '../auth/authSlice';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@client/components/ui/dialog";
+import { Input } from "@client/components/ui/input";
+import { Button } from "@client/components/ui/button";
+import { Label } from "@client/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@client/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@client/components/ui/select";
+import { Textarea } from "@client/components/ui/textarea";
+import { Autocomplete, TextField } from '@mui/material';
+
+import tempImage from "@client/assets/images/profile.png";
+import urls, { basePath, serverPath } from '@utils/urls';
 import Footer from '../footer';
 import Loading from '../loading';
-import CustomModal from '../modal';
-import SubmitModal from '../submitModal';
-import { MuiFileInput } from "mui-file-input";
-import PostCard from '../posts/PostCard';
 import AddressModal from "./AddressModal";
 import ProfileAnalytics from "./ProfileAnalytics";
 import CompleteProfile from "./CompleteProfile";
 import ContactInfo from "./ContactInfo";
 import EducationDetails from "./EducationDetails";
-import SkillsDetails from "./SkillsDetails"
+import SkillsDetails from "./SkillsDetails";
 import AchievementsDetails from "./AchievementsDetails";
 import RightContainer from "./RightContainer";
 
 const ProfileComponent = () => {
+    const params = useParams();
+    const session = useSelector(selectSession);
 
-    const navigate = useNavigate()
-    const params = useParams()
-    const session = useSelector(selectSession)
-
-    const [showSkillModal, setShowSkillModal] = useState(false);
+    // State declarations
     const [showAddressModal, setShowAddressModal] = useState(false);
-    const [showAchievementModal, setShowAchievementModal] = useState(false);
-    const [showEducationModal, setShowEducationModal] = useState(false);
+    const [showAddressDetailsModal, setShowAddressDetailsModal] = useState(false);
     const [showContactModal, setShowContactModal] = useState(false);
-    const [profilePhotoModelOpen, setProfilePhotoModalOpen] = useState(false)
+    const [showSkillModal, setShowSkillModal] = useState(false);
+    const [showEducationModal, setShowEducationModal] = useState(false);
+    const [showAchievementModal, setShowAchievementModal] = useState(false);
+    const [profilePhotoModalOpen, setProfilePhotoModalOpen] = useState(false);
 
-    const [info, setInfo] = useState("")
-    const [description, setDescription] = useState("")
-    const [others, setOthers] = useState(false)
-    const [file, setFile] = useState(null)
-    const [changedSkill, setChangedSkill] = useState("")
+    const [info, setInfo] = useState("");
+    const [description, setDescription] = useState("");
+    const [others, setOthers] = useState(false);
+    const [file, setFile] = useState(null);
+    const [changedSkill, setChangedSkill] = useState("");
 
-    const profileUrl = basePath + urls.user.profile.get.replace(':id', params.id)
-    const connectionsUrl = basePath + urls.connections.getByUser.replace(":user", params.id)
-    const postUrl = basePath + urls.posts.get.replace(":id", params.id)
+    // API endpoints
+    const endpoints = {
+        profile: basePath + urls.user.profile.get.replace(':id', params.id),
+        connections: basePath + urls.connections.getByUser.replace(":user", params.id),
+        posts: basePath + urls.posts.get.replace(":id", params.id),
+        skills: basePath + urls.skills,
+        institutes: basePath + urls.institute.findAll,
+        jobs: basePath + urls.job.findById.replace(":id", params.id)
+    };
 
-    const { data: connectedUser } = useGetter(connectionsUrl)
-    const { data: postData, mutate: postMutate } = useGetter(postUrl)
-    const { data: skillsData } = useGetter(basePath + urls.skills)
-    const { data: tempUser, mutate: tempUserMutate, isLoading } = useGetter(profileUrl)
-    const { data: instituteData } = useGetter(basePath + urls.institute.findAll)
-    const { data: jobData } = useGetter(basePath + urls.job.findById.replace(":id", params.id))
-    const { data: updatedUserData, trigger: updateProfilePhoto, error: updatedUserError } = usePutter(basePath + urls.user.updateProfilePhoto)
+    // Data fetching hooks
+    const { data: connectedUser } = useGetter(endpoints.connections);
+    const { data: postData } = useGetter(endpoints.posts);
+    const { data: skillsData } = useGetter(endpoints.skills);
+    const { data: tempUser, mutate: tempUserMutate, isLoading } = useGetter(endpoints.profile);
+    const { data: instituteData } = useGetter(endpoints.institutes);
+    const { data: jobData } = useGetter(endpoints.jobs);
+    const { data: updatedUserData, trigger: updateProfilePhoto, error: updatedUserError } = usePutter(basePath + urls.user.updateProfilePhoto);
 
-    const [profilePhotoUrl, setProfilePhotoUrl] = useState(tempUser?.data?.profilePhoto ? serverPath + tempUser?.data?.profilePhoto : tempImage)
+    const [profilePhotoUrl, setProfilePhotoUrl] = useState(
+        tempUser?.data?.profilePhoto ? serverPath + tempUser?.data?.profilePhoto : tempImage
+    );
 
+    // Form handling
+    const form = useFormik({
+        initialValues: {
+            type: "",
+            institute: "",
+            joined: "",
+            completion: { isCurrent: false }
+        },
+        onSubmit: handleAddEducation
+    });
+
+    const handleChange = (e) => {
+        if (e.target.files?.[0]) {
+            handleFileChange(e.target.files[0]);
+        }
+    };
+
+    const handleFileChange = (newFile) => {
+        setFile(newFile);
+        const fileReader = new FileReader();
+        fileReader.onload = (e) => setProfilePhotoUrl(e.target.result);
+        fileReader.readAsDataURL(newFile);
+    };
+
+    const handleCloseProfilePhoto = () => {
+        setFile(null);
+        setProfilePhotoModalOpen(false);
+        setProfilePhotoUrl(tempUser?.data?.profilePhoto ? serverPath + tempUser?.data?.profilePhoto : tempImage);
+    };
+
+    // Submit handlers
     const handleAddSkill = async () => {
-        const res = await axios.put(basePath + urls.user.profile.addSkill, { skill: changedSkill }, {
-            headers: {
-                authorization: `Bearer ${session?.token}`
+        try {
+            const res = await axios.put(
+                basePath + urls.user.profile.addSkill,
+                { skill: changedSkill },
+                { headers: { authorization: `Bearer ${session?.token}` } }
+            );
+
+            if (res?.status === 200) {
+                toast.success("Added Skill Successfully");
+                setShowSkillModal(false);
+                setChangedSkill("");
+                tempUserMutate();
             }
-        })
-        if (res?.status === 200)
-            toast.success("Added Skill Successfully")
-        else
-            toast.error("Something went wrong!!")
-        if (res?.data) {
-            setShowSkillModal(false)
-            setChangedSkill("")
-            tempUserMutate()
+        } catch (error) {
+            toast.error("Something went wrong!");
+        }
+    };
+
+    async function handleAddEducation() {
+        try {
+            setShowEducationModal(false);
+            const res = await axios.post(
+                basePath + urls.education.create,
+                form.values,
+                { headers: { authorization: `Bearer ${session?.token}` } }
+            );
+
+            if (res?.status === 200) {
+                toast.success("Added Education Successfully");
+                tempUserMutate();
+                form.resetForm();
+            }
+        } catch (error) {
+            toast.error("Something went wrong!");
         }
     }
+
     const handleAddAchievement = async (e) => {
-        e.preventDefault()
-        const data = new FormData()
-        data.append("info", info)
-        data.append("description", description)
-        const res = await axios.post(basePath + urls.achievement.create, data, {
-            headers: {
-                authorization: `Bearer ${session?.token}`,
-                "Content-Type": 'multipart/form-data'
+        e.preventDefault();
+        const data = new FormData();
+        data.append("info", info);
+        data.append("description", description);
+
+        try {
+            const res = await axios.post(
+                basePath + urls.achievement.create,
+                data,
+                {
+                    headers: {
+                        authorization: `Bearer ${session?.token}`,
+                        "Content-Type": 'multipart/form-data'
+                    }
+                }
+            );
+
+            if (res?.status === 200) {
+                toast.success("Added achievement Successfully");
+                setShowAchievementModal(false);
+                setDescription("");
+                setInfo("");
+                tempUserMutate();
             }
-        })
-        if (res?.status === 200 || res?.status === "success")
-            toast.success("Added achievement Successfully")
-        else
-            toast.error("Something went wrong!!")
-        if (res?.data) {
-            setShowAchievementModal(false)
-            setDescription("")
-            setInfo("")
-            tempUserMutate()
+        } catch (error) {
+            toast.error("Something went wrong!");
         }
-    }
+    };
+
+    const { values: formData, handleChange: handleChangeFormData } = form
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         const formData = new FormData(e.currentTarget)
@@ -117,300 +192,358 @@ const ProfileComponent = () => {
             tempUserMutate()
         }
     }
-    const form = useFormik({
-        initialValues: {
-            type: "",
-            institute: "",
-            joined: "",
-            completion: {
-                isCurrent: false
-            }
-        }
-    })
-    const handleChange = (newFile) => {
-        setFile(newFile)
-        const fileReader = new FileReader()
-        fileReader.onload = (e) => setProfilePhotoUrl(e.target.result)
-        fileReader.readAsDataURL(newFile)
-    }
+
     const handleSubmitProfilePhoto = async () => {
         if (!file) {
-            toast.error("No file uploaded")
-            return
+            toast.error("No file uploaded");
+            return;
         }
-        const formData = new FormData()
-        formData.set("profile", file, file.name)
-        console.log(formData.forEach((v, k) => console.log(k, v)))
-        await updateProfilePhoto(formData)
-    }
-    const handleCloseProfilePhoto = () => {
-        setFile(null)
-        setProfilePhotoModalOpen(false)
-        setProfilePhotoUrl(tempUser?.data?.profilePhoto ? serverPath + tempUser?.data?.profilePhoto : tempImage)
-    }
-    const { values: formData, handleChange: handleChangeFormData } = form
-    const handleAddEducation = async () => {
-        setShowEducationModal(false)
-        const res = await axios.post(basePath + urls.education.create, formData, {
-            headers: {
-                authorization: `Bearer ${session?.token}`
-            }
-        })
-        if (res?.status === 200)
-            toast.success("Added Education Successfully")
-        else
-            toast.error("Something went wrong!!")
-        if (res.data)
-            tempUserMutate()
-    }
+
+        const formData = new FormData();
+        formData.set("profile", file, file.name);
+        await updateProfilePhoto(formData);
+    };
+
+    // Effects
     useEffect(() => {
-        setOthers(session?.user !== params.id)
-    }, [session.token]);
+        setOthers(session?.user !== params.id);
+    }, [session?.user, params.id]);
+
     useEffect(() => {
-        handleCloseProfilePhoto()
-        if (updatedUserData)
-            toast.success("Successfully updated profile photo! It may take some time to update in the overall website")
-        if (updatedUserError)
-            toast.error("Error while updating profile photo")
-    }, [updatedUserData, updatedUserError])
+        handleCloseProfilePhoto();
+        if (updatedUserData) {
+            toast.success("Successfully updated profile photo!");
+            tempUserMutate();
+        }
+        if (updatedUserError) {
+            toast.error("Error while updating profile photo");
+        }
+    }, [updatedUserData, updatedUserError]);
+
+    if (isLoading) return <Loading />;
     return (
-        <>{isLoading ?
-            <Loading /> :
-            <div className="profileContainer">
-                <div className="container-main">
-                    <div className="card profileCard-profile">
-                        <div className="cover"></div>
-                        {tempUser?.data?._id === session.user && (
-                            <Link to="/edit-details">
-                                <span className="material-symbols-rounded cover-edit">edit</span>
-                            </Link>)}
-                        <div className="profileInfo tempProfile">
-                            <img src={tempUser?.data?.profilePhoto ? serverPath + tempUser?.data?.profilePhoto : tempImage} alt="profileImg" className="profileImg" />
-                            {tempUser?.data?._id === session?.user && <>
-                                <span
-                                    className="material-symbols-rounded profile-edit-button"
-                                    onClick={() => setProfilePhotoModalOpen(true)}>
-                                    edit</span></>}</div>
-                        <div className="profileDetails w-100">
-                            <div className="personal">
-                                <div className="edit-title">
-                                    <h3>
+        <div>
+            <div className="flex flex-col lg:flex-row gap-12 bg-gray-900 text-gray-100 p-6">
+                {/* Left Section */}
+                <div className="flex-1 space-y-6">
+                    {/* Profile Card */}
+                    <div className="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden">
+                        <div className="h-32 bg-gray-700 relative">
+                            <Link to="/edit-details" className="absolute top-2 right-2">
+                                <span className="material-symbols-rounded bg-gray-900/50 text-gray-100 p-1 rounded-full hover:bg-gray-800">
+                                    edit
+                                </span>
+                            </Link>
+                        </div>
+                        <div className="relative -mt-16 px-6">
+                            <div className="relative">
+                                <img
+                                    src={tempUser?.data?.profilePhoto ? serverPath + tempUser?.data?.profilePhoto : tempImage}
+                                    alt="Profile"
+                                    className="w-32 h-32 rounded-full border-4 border-gray-800"
+                                />
+                            </div>
+                            <div className="mt-4">
+                                <div className="flex items-center gap-4">
+                                    <h3 className="text-xl font-semibold text-gray-100">
                                         {tempUser?.data?.name?.first} {tempUser?.data?.name?.last}
-                                        <Chip sx={{ background: "white", color: "black", margin: "0 1rem" }} label={tempUser?.data?.role.toUpperCase()} />
                                     </h3>
+                                    <span className="px-3 py-1 bg-gray-700 text-gray-100 text-sm font-medium rounded">
+                                        {tempUser?.data?.role.toUpperCase()}
+                                    </span>
                                 </div>
-                                <p className="personalDescription">{tempUser?.data?.bio || ""}</p>
-                                <p className="location-info">
-                                    {Object.keys(tempUser?.data).includes("profile") ? <Link to="#" data-bs-toggle="modal" data-bs-target="#addressModal" className="linkStyle">
+                                <div className="my-4 flex items-center gap-2 text-sm">
+                                    <button
+                                        onClick={() => setShowAddressDetailsModal(true)}
+                                        className="text-blue-400 hover:text-blue-300 transition"
+                                    >
                                         Address
-                                    </Link> : <></>}
-
-                                    <span style={{ fontSize: '15px' }}>•</span>
-                                    <Link to="#" className="linkStyle" data-bs-toggle="modal" data-bs-target="#contactModal">
+                                    </button>
+                                    <span className="text-gray-500">•</span>
+                                    <button
+                                        onClick={() => setShowContactModal(true)}
+                                        className="text-blue-400 hover:text-blue-300 transition"
+                                    >
                                         Contact Info
-                                    </Link>
-                                </p>
-
-                                <div className={`modal profileModal fade ${showContactModal ? 'show' : ''}`} id="contactModal" tabIndex={-1} aria-labelledby="articleModalLabel" aria-hidden="true" style={{ color: 'black' }}>
-                                    <ContactInfo tempUser={tempUser} />
+                                    </button>
                                 </div>
-
-                                <div className={`modal profileModal fade ${showAddressModal ? 'show' : ''}`} id="addressModal" tabIndex={-1} aria-labelledby="articleModalLabel" aria-hidden="true" style={{ color: 'black' }}>
-                                    <AddressModal tempUser={tempUser} />
-                                </div>
-
                             </div>
                         </div>
                     </div>
 
-                    {/* Profile Card - Analytics */}
-                    <ProfileAnalytics postData={postData} tempUser={tempUser} id={params?.id} jobData={jobData} session={session} connectedUser={connectedUser} others={others} />
-
-                    {/* Profile Card - Education */}
-                    <EducationDetails
-                        isAdmin={Object.values(tempUser?.data).includes("admin")}
-                        hasProfile={Object.keys(tempUser?.data).includes("profile")}
-                        education={tempUser?.data?.profile?.education}
+                    {/* Analytics Section */}
+                    <ProfileAnalytics
+                        postData={postData}
+                        tempUser={tempUser}
+                        id={params?.id}
+                        jobData={jobData}
+                        session={session}
+                        connectedUser={connectedUser}
                         others={others}
-                        onAddEducation={() => setShowEducationModal(true)}
                     />
 
-                    {/* Profile Card - Skills */}
-                    <SkillsDetails
-                        isAdmin={!Object.keys(tempUser?.data).includes("admin")}
-                        hasProfile={Object.keys(tempUser?.data).includes("profile")}
-                        skills={tempUser?.data?.profile?.skills}
-                        others={others}
-                        onAddSkill={() => setShowSkillModal(true)}
-                    />
-
-                    {/* Profile Card - Achievements */}
-                    <AchievementsDetails
-                        isAdmin={!Object.keys(tempUser?.data).includes("admin")}
-                        hasProfile={Object.keys(tempUser?.data).includes("profile")}
-                        achievements={tempUser?.data?.profile?.achievements}
-                        others={others}
-                        onAddAchievement={() => setShowAchievementModal(true)}
-                        serverPath={serverPath}
-                    />
-
-                    {/* {!others && postData?.data.map((post, id) => <PostCard key={id} post={post} delete={true} postMutate={postMutate} />)} */}
-
+                    {/* Collapsible Sections */}
+                    <div className="space-y-4">
+                        <EducationDetails
+                            isAdmin={tempUser?.data?.role === "admin"}
+                            hasProfile={!!tempUser?.data?.profile}
+                            education={tempUser?.data?.profile?.education}
+                            others={others}
+                            onAddEducation={() => setShowEducationModal(true)}
+                        />
+                        <SkillsDetails
+                            isAdmin={tempUser?.data?.role !== "admin"}
+                            hasProfile={!!tempUser?.data?.profile}
+                            skills={tempUser?.data?.profile?.skills}
+                            others={others}
+                            onAddSkill={() => setShowSkillModal(true)}
+                        />
+                        <AchievementsDetails
+                            isAdmin={tempUser?.data?.role !== "admin"}
+                            hasProfile={!!tempUser?.data?.profile}
+                            achievements={tempUser?.data?.profile?.achievements}
+                            others={others}
+                            onAddAchievement={() => setShowAchievementModal(true)}
+                            serverPath={serverPath}
+                        />
+                    </div>
                 </div>
 
-                {/* Right Container */}
-                <div className="container-right content">
+                {/* Right Sidebar */}
+                <div className="w-full lg:w-[28rem] space-y-6">
                     <RightContainer
                         others={others}
                         tempUser={tempUser}
                         setShowAddressModal={setShowAddressModal}
                     />
-                    <Footer></Footer>
+                    <Footer />
                 </div>
+
             </div>
-        }
-            <SubmitModal
-                open={showAddressModal}
-                setOpen={setShowAddressModal}
-                title={"Complete your profile"}
-                handleSubmit={handleSubmit}
-            >
-                <CompleteProfile />
-            </SubmitModal>
-            <CustomModal
-                open={showSkillModal}
-                setOpen={setShowSkillModal}
-                title={"Add Skill"}
-                handleSubmit={handleAddSkill}
-            >
-                <Autocomplete
-                    freeSolo
-                    options={skillsData?.data?.filter(skill => !tempUser?.data?.profile?.skills?.map(e => e?._id)?.includes(skill?._id))?.map(e => e?.name) || []}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Add your skills" onChange={e => setChangedSkill(e.target.value)} />
-                    )}
-                    onChange={(_, value) => setChangedSkill(value)}
-                />
-            </CustomModal>
-            <CustomModal
-                open={showEducationModal}
-                setOpen={setShowEducationModal}
-                title={"Add Education"}
-                handleSubmit={handleAddEducation}
-            >
-                <Stack direction='column'>
-                    <FormControl fullWidth sx={{ marginBottom: "1rem" }}>
-                        <InputLabel id="demo-simple-select-label">Type of Education</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={formData.type}
-                            label="Education"
-                            name="type"
-                            onChange={handleChangeFormData}
-                        >
-                            <MenuItem value={"metric"}>Metric</MenuItem>
-                            <MenuItem value={"high school"}>High School</MenuItem>
-                            <MenuItem value={"graduation"}>Graduation</MenuItem>
-                            <MenuItem value={"post graduation"}>Post Graduation</MenuItem>
-                            <MenuItem value={"Ph.D"}>Ph.D</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <FormControl fullWidth sx={{ marginBottom: "1rem" }}>
-                        <InputLabel id="demo-simple-select-label">Select Institute</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={formData.institute}
-                            label="Insitute"
-                            name="institute"
-                            onChange={handleChangeFormData}>
-                            {instituteData?.data?.map((e, ind) => (<MenuItem key={ind} value={e?._id}>{e?.name}</MenuItem>))}
-                        </Select>
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel id="demo-radio-buttons-group-label">Are you currently studying here?</FormLabel>
-                        <RadioGroup
-                            aria-labelledby="demo-radio-buttons-group-label"
-                            name="radio-buttons-group"
-                            value={formData.completion.isCurrent}><FormControlLabel
-                                value={true}
-                                control={<Radio />}
-                                label="Yes"
-                                name="completion.isCurrent"
-                                onChange={handleChangeFormData} /><FormControlLabel
-                                value={false}
-                                control={<Radio />}
-                                label="No"
-                                name="completion.isCurrent"
-                                onChange={handleChangeFormData}
-                            /></RadioGroup></FormControl><FormControl><FormLabel>Joining Date</FormLabel><TextField
-                                type='date'
-                                variant='filled'
-                                name="joined"
-                                onChange={handleChangeFormData}
-                                value={formData.joined} /></FormControl></Stack></CustomModal>
-            <SubmitModal
-                open={showAchievementModal}
-                setOpen={setShowAchievementModal}
-                title={"Add Achievements"}
-                handleSubmit={handleAddAchievement}>
-                <Box noValidate sx={{ mt: 2, color: 'white' }} className='formContainer' padding={'1rem'}>
-                    <Stack direction={'column'}><Stack sx={{ mt: 2 }} direction={'row'} spacing={2}>
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="firstName"
-                            label="Title of the Achievement"
-                            name="info"
-                            autoComplete="firstName"
-                            autoFocus
-                            onChange={(e) => setInfo(e.target.value)}
-                            sx={{
-                                "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
-                                "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": { color: "white" },
-                                "& .MuiInputLabel-outlined.Mui-focused": { color: "white" },
-                                "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
-                            }}
-                        />
-                    </Stack>
-                        <Stack sx={{ mt: 2 }} direction={'row'} spacing={2}>
-                            <TextField
-                                margin="normal"
-                                fullWidth
-                                name="description"
-                                label="Description of the Achievement"
-                                id="userBio"
-                                multiline
-                                onChange={(e) => setDescription(e.target.value)}
-                                rows={4}
-                                autoComplete="userBio"
-                                sx={{
-                                    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
-                                    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": { color: "white" },
-                                    "& .MuiInputLabel-outlined.Mui-focused": { color: "white" },
-                                    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": { borderColor: "white" },
-                                }}
+
+            <Dialog open={showContactModal} onOpenChange={setShowContactModal}>
+                <DialogContent className="bg-gray-800 text-gray-100">
+                    <DialogHeader>
+                        <DialogTitle>Contact Details</DialogTitle>
+                    </DialogHeader>
+                    <ContactInfo tempUser={tempUser} />
+                    <div className="flex justify-end gap-4">
+                        <Button variant="outline" onClick={() => setShowContactModal(false)}>
+                            Cancel
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={showAddressDetailsModal} onOpenChange={setShowAddressDetailsModal}>
+                <DialogContent className="bg-gray-800 text-gray-100">
+                    <DialogHeader>
+                        <DialogTitle>Address Details</DialogTitle>
+                    </DialogHeader>
+                    <AddressModal tempUser={tempUser} />
+                    <div className="flex justify-end gap-4">
+                        <Button variant="outline" onClick={() => setShowAddressDetailsModal(false)}>
+                            Cancel
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={showAddressModal} onOpenChange={setShowAddressModal}>
+                <DialogContent className="bg-gray-800 text-gray-100">
+                    <DialogHeader>
+                        <DialogTitle>Complete your profile</DialogTitle>
+                    </DialogHeader>
+                    <CompleteProfile />
+                    <div className="flex justify-end gap-4">
+                        <Button variant="outline" onClick={() => setShowAddressModal(false)}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handleSubmit}>Submit</Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Skills Modal */}
+            <Dialog open={showSkillModal} onOpenChange={setShowSkillModal}>
+                <DialogContent className="bg-gray-800 text-gray-100">
+                    <DialogHeader>
+                        <DialogTitle>Add Skill</DialogTitle>
+                    </DialogHeader>
+                    <Autocomplete
+                        freeSolo
+                        options={skillsData?.data?.filter(skill => !tempUser?.data?.profile?.skills?.map(e => e?._id)?.includes(skill?._id))?.map(e => e?.name) || []}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Add your skills" onChange={e => setChangedSkill(e.target.value)} />
+                        )}
+                        onChange={(_, value) => setChangedSkill(value)}
+                    />
+                    <div className="flex justify-end gap-4">
+                        <Button variant="outline" onClick={() => setShowSkillModal(false)}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handleAddSkill}>Add</Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Education Modal */}
+            <Dialog open={showEducationModal} onOpenChange={setShowEducationModal}>
+                <DialogContent className="bg-gray-800 text-gray-100">
+                    <DialogHeader>
+                        <DialogTitle>Add Education</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label>Type of Education</Label>
+                            <Select
+                                value={formData.type}
+                                onValueChange={(value) => handleChangeFormData({ target: { name: "type", value } })}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="metric">Metric</SelectItem>
+                                    <SelectItem value="high school">High School</SelectItem>
+                                    <SelectItem value="graduation">Graduation</SelectItem>
+                                    <SelectItem value="post graduation">Post Graduation</SelectItem>
+                                    <SelectItem value="Ph.D">Ph.D</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Select Institute</Label>
+                            <Select
+                                value={formData.institute}
+                                onValueChange={(value) => handleChangeFormData({ target: { name: "institute", value } })}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select institute" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {instituteData?.data?.map((e) => (
+                                        <SelectItem key={e._id} value={e._id}>
+                                            {e.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Currently Studying Here?</Label>
+                            <RadioGroup
+                                value={formData.completion.isCurrent}
+                                onValueChange={(value) =>
+                                    handleChangeFormData({
+                                        target: {
+                                            name: "completion.isCurrent",
+                                            value: value === "true"
+                                        }
+                                    })
+                                }
+                            >
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="true" id="current-yes" />
+                                    <Label htmlFor="current-yes">Yes</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="false" id="current-no" />
+                                    <Label htmlFor="current-no">No</Label>
+                                </div>
+                            </RadioGroup>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Joining Date</Label>
+                            <Input
+                                type="date"
+                                value={formData.joined}
+                                onChange={(e) => handleChangeFormData({
+                                    target: { name: "joined", value: e.target.value }
+                                })}
                             />
-                        </Stack>
-                    </Stack>
-                </Box>
-            </SubmitModal>
-            <CustomModal open={profilePhotoModelOpen} setOpen={setProfilePhotoModalOpen} title={"Change Profile Photo"} handleSubmit={handleSubmitProfilePhoto} handleClose={handleCloseProfilePhoto}>
-                <Stack direction="column">
-                    <ImageList cols={3}>
-                        <ImageListItem />
-                        <ImageListItem>
-                            <img src={profilePhotoUrl} alt="profile-photo" />
-                        </ImageListItem>
-                        <ImageListItem />
-                    </ImageList>
-                    <MuiFileInput
-                        value={file} onChange={handleChange} InputProps={{ inputProps: { accept: "image/jpeg,image/png" }, startAdornment: <AddPhotoAlternateIcon /> }} />
-                </Stack>
-            </CustomModal>
-        </>
+                        </div>
+                    </div>
+                    <div className="flex justify-end gap-4">
+                        <Button variant="outline" onClick={() => setShowEducationModal(false)}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handleAddEducation}>Add</Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Achievement Modal */}
+            <Dialog open={showAchievementModal} onOpenChange={setShowAchievementModal}>
+                <DialogContent className="bg-gray-800 text-gray-100">
+                    <DialogHeader>
+                        <DialogTitle>Add Achievement</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label>Title of Achievement</Label>
+                            <Input
+                                placeholder="Enter achievement title"
+                                onChange={(e) => setInfo(e.target.value)}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Description</Label>
+                            <Textarea
+                                placeholder="Enter achievement description"
+                                className="h-32"
+                                onChange={(e) => setDescription(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex justify-end gap-4">
+                        <Button variant="outline" onClick={() => setShowAchievementModal(false)}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handleAddAchievement}>Add</Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Profile Photo Modal */}
+            <Dialog
+                open={profilePhotoModalOpen}
+                onOpenChange={setProfilePhotoModalOpen}
+            >
+                <DialogContent className="bg-gray-800 text-gray-100">
+                    <DialogHeader>
+                        <DialogTitle>Change Profile Photo</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div className="grid grid-cols-3 gap-4">
+                            <div />
+                            <div className="aspect-square">
+                                <img
+                                    src={profilePhotoUrl}
+                                    alt="profile-photo"
+                                    className="w-full h-full object-cover rounded-lg"
+                                />
+                            </div>
+                            <div />
+                        </div>
+                        <Input
+                            type="file"
+                            accept="image/jpeg,image/png"
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="flex justify-end gap-4">
+                        <Button variant="outline" onClick={handleCloseProfilePhoto}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handleSubmitProfilePhoto}>Update</Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+        </div >
     );
 };
 export default ProfileComponent;

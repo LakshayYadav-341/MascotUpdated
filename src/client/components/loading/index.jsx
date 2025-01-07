@@ -8,10 +8,10 @@ export default function Loading({ style }) {
     <Box
       sx={{
         display: 'flex',
-        flexDirection: 'column', // Stack the loader and message vertically
+        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh', // Set the height to full viewport height
+        height: '100vh',
         ...style,
       }}
     >

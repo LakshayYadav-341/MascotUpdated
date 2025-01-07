@@ -1,37 +1,38 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
-import "./Conversation.css"
+import React, { useState, useEffect } from "react";
 import { serverPath } from "../../../utils/urls";
-import tempImage from "@client/assets/images/profile.png"
+import tempImage from "@client/assets/images/profile.png";
 
 const Conversation = ({ data, currentUser, online }) => {
+  const [userData, setUserData] = useState(null);
 
-  const [userData, setUserData] = useState(null)
+  useEffect(() => {
+    const memberDetails = data.members.find((member) => member._id !== currentUser);
+    setUserData(memberDetails);
+  }, [data, currentUser]);
 
-  useEffect(()=> {
-
-    const memberDetails = data.members.find(member => member._id !== currentUser)
-    setUserData(memberDetails)
-  }, [])
   return (
-    <>
-      <div className="follower conversation">
-        <div>
-          {online && <div className="online-dot"></div>}
+    <div className="bg-gray-800 rounded-lg shadow-md p-4 flex items-center justify-between">
+      <div className="flex items-center">
+        <div className="relative">
+          {online && (
+            <div className="bg-green-500 w-3 h-3 rounded-full absolute bottom-0 right-0 border-2 border-gray-800"></div>
+          )}
           <img
             src={userData?.profilePhoto ? serverPath + userData?.profilePhoto : tempImage}
             alt="Profile"
-            className="followerImage"
-            style={{ width: "50px", height: "50px" }}
+            className="w-12 h-12 rounded-full object-cover"
           />
-          <div className="name" style={{fontSize: '0.8rem'}}>
-            <span>{userData?.name?.first} {userData?.name?.last}</span>
-            <span style={{color: online?"#51e200":""}}>{online? "Online" : "Offline"}</span>
-          </div>
+        </div>
+        <div className="ml-4">
+          <h3 className="text-gray-300 font-bold text-lg">
+            {userData?.name?.first} {userData?.name?.last}
+          </h3>
+          <p className={`text-sm ${online ? "text-green-500" : "text-gray-400"}`}>
+            {online ? "Online" : "Offline"}
+          </p>
         </div>
       </div>
-      <hr style={{ width: "100%", border: "0.1px solid #ececec", margin: "5px 0"}} />
-    </>
+    </div>
   );
 };
 

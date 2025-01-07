@@ -1,16 +1,15 @@
-// @ts-ignore
-// import classes from "./styles.module.scss"
 import { useState } from "react";
-import urls, { basePath } from "../../../utils/urls";
 import { Link } from "react-router-dom";
+import urls, { basePath } from "../../../utils/urls";
 import { usePoster } from "../../hooks/fetcher";
 import { toast } from "react-toastify";
-
+import { Newspaper } from "lucide-react";
+``
 const ReportPostButton = ({ post }) => {
-  const reportUrl = basePath + urls.reportedPost.create;
   const [reason, setReason] = useState("");
-
-  const { data: reportedData, trigger: reportPost } = usePoster(reportUrl);
+  const [isOpen, setIsOpen] = useState(false);
+  const reportUrl = basePath + urls.reportedPost.create;
+  const { trigger: reportPost } = usePoster(reportUrl);
 
   const clickHandler = async () => {
     try {
@@ -21,8 +20,9 @@ const ReportPostButton = ({ post }) => {
 
       if (res?.status === "success") {
         toast.success("Reported Post Successfully");
+        setIsOpen(false);
       } else {
-        toast.error("Something went wrong!!");
+        toast.error("Something went wrong!");
       }
     } catch (error) {
       console.error("Error while reporting post:", error);
@@ -32,53 +32,69 @@ const ReportPostButton = ({ post }) => {
 
   return (
     <>
-      <Link data-bs-toggle="modal" data-bs-target="#reportModal">
-        <i className="fa-regular fa-newspaper"></i> Report
-      </Link>
-
-      <div
-        className="modal fade mt-5"
-        id="reportModal"
-        tabIndex="-1"
-        aria-labelledby="reportModalLabel"
-        aria-hidden="true"
+      <button
+        onClick={() => setIsOpen(true)}
+        className="flex items-center gap-2 text-gray-300 hover:text-gray-300 transition-colors"
       >
-        <div className="modal-dialog modal-md">
-          <div className="modal-content" style={{ backgroundColor: "rgb(27, 39, 48)" }}>
-            <div className="modal-header pb-0" style={{ color: "#fff" }}>
-              <div className="modal-title" id="exampleModalLabel">
-                <h4 className="mb-3" style={{fontWeight:"600"}}>Report Content</h4>
-                <h6>Reason of Report</h6>
+        <Newspaper className="w-4 h-4" />
+        <span>Report</span>
+      </button>
+
+      {isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-900 rounded-lg w-full max-w-md">
+            <div className="p-6 space-y-4">
+              {/* Header */}
+              <div className="flex justify-between items-start">
+                <div className="space-y-1">
+                  <h3 className="text-xl font-semibold text-gray-300">
+                    Report Content
+                  </h3>
+                  <p className="text-sm text-gray-400">
+                    Reason of Report
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="text-gray-400 hover:text-gray-300 transition-colors"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
               </div>
-              <button
-                type="button"
-                className="btn-close btn-close-white"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body" style={{ color: "#fff" }}>
-              <div className="mb-3">
+
+              {/* Body */}
+              <div className="space-y-4">
                 <textarea
-                  className="form-control"
-                  name="content.text"
-                  rows="6"
+                  className="w-full h-32 px-3 py-2 text-gray-300 bg-gray-800 rounded-lg 
+                           border border-gray-700 focus:border-blue-500 focus:ring-1 
+                           focus:ring-blue-500 outline-none transition-colors"
+                  placeholder="Please describe your reason for reporting..."
                   onChange={(e) => setReason(e.target.value)}
-                ></textarea>
+                  value={reason}
+                />
+
+                <button
+                  onClick={clickHandler}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-gray-300 font-medium 
+                           py-2 px-4 rounded-lg transition-colors duration-200"
+                >
+                  Report
+                </button>
               </div>
-              <button
-                type="button"
-                className="btn submitButton"
-                data-bs-dismiss="modal"
-                style={{ width: "100%" }}
-                onClick={clickHandler}
-              >
-                Report
-              </button>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

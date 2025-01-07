@@ -3,7 +3,6 @@ import { Stack, Alert } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -12,7 +11,6 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import { createUserAsync, selectUserCreated, resetUserCreationState } from '../auth/authSlice';
-import classes from "./styles.module.scss";
 
 export default function Details(props) {
   const [loading, setLoading] = useState(false);
@@ -80,7 +78,7 @@ export default function Details(props) {
       if (fileSize > 5) {
         newErrors['profilePhoto'] = 'Image size should not exceed 5MB';
       }
-      
+
       const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
       if (!validTypes.includes(profilePhoto.type)) {
         newErrors['profilePhoto'] = 'Please upload a valid image file (JPG, PNG)';
@@ -127,238 +125,140 @@ export default function Details(props) {
   return (
     <>
       {created && <Navigate to="/signin" replace={true} />}
-      <Container component="main" maxWidth="sm">
-        <CssBaseline />
-        <Box
-          className={classes.box}
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h4">
-            Get Started With Mascot
-          </Typography>
-          {submitError && (
-            <Alert severity="error" sx={{ width: '100%', mt: 2 }}>
-              {submitError}
-            </Alert>
-          )}
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 2, color: 'white' }}>
-            <Stack direction={'row'} spacing={8}>
-              <Box sx={{ bgcolor: 'primary.dark', padding: '1rem', borderRadius: '10px', boxShadow: '-4px 4px 5px 1px black' }}>
-                <Stack direction={'column'}>
-                  <Typography component="h1" variant="h5">
-                    Personal Details
-                  </Typography>
-                  <Stack sx={{ mt: 2 }} direction={'row'} spacing={2}>
-                    <TextField
-                      margin="normal"
-                      required
-                      fullWidth
-                      id="firstName"
-                      label="First Name"
-                      name="name.first"
-                      autoComplete="firstName"
-                      autoFocus
-                      error={!!errors.firstName}
-                      helperText={errors.firstName}
-                      sx={{
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "white"
-                        },
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-                          color: "white"
-                        },
-                        "& .MuiInputLabel-outlined.Mui-focused": {
-                          color: "white"
-                        },
-                        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "white"
-                        },
-                        "& .MuiFormHelperText-root": {
-                          color: "#f44336"
-                        }
-                      }}
-                    />
-                    <TextField
-                      margin="normal"
-                      required
-                      fullWidth
-                      name="name.last"
-                      label="Last Name"
-                      id="lastName"
-                      autoComplete="lastName"
-                      error={!!errors.lastName}
-                      helperText={errors.lastName}
-                      sx={{
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "white"
-                        },
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-                          color: "white"
-                        },
-                        "& .MuiInputLabel-outlined.Mui-focused": {
-                          color: "white"
-                        },
-                        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "white"
-                        },
-                        "& .MuiFormHelperText-root": {
-                          color: "#f44336"
-                        }
-                      }}
-                    />
+      <main className="flex justify-center items-center h-full bg-gray-800">
+        <div className="bg-gray-700 rounded-lg shadow-md p-8 w-full max-w-md">
+          <CssBaseline />
+          <Box className="flex flex-col items-center">
+            <Avatar className="mb-4 bg-primary.main">
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h4" className="text-gray-300 mb-4">
+              Get Started With Mascot
+            </Typography>
+            {submitError && (
+              <Alert severity="error" className="w-full mt-2">
+                {submitError}
+              </Alert>
+            )}
+            <Box component="form" onSubmit={handleSubmit} noValidate className="w-full mt-2 text-gray-300">
+              <Stack direction="row" spacing={8}>
+                <Box className="bg-primary.dark p-4 rounded-lg shadow-md w-full">
+                  <Stack direction="column">
+                    <Typography component="h1" variant="h5" className="text-gray-300">
+                      Personal Details
+                    </Typography>
+                    <Stack className="mt-2" direction="row" spacing={2}>
+                      <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="firstName"
+                        label="First Name"
+                        name="name.first"
+                        autoComplete="firstName"
+                        autoFocus
+                        error={!!errors.firstName}
+                        helperText={errors.firstName}
+                        InputLabelProps={{ className: "text-gray-300" }}
+                        InputProps={{ className: "text-gray-300" }}
+                        FormHelperTextProps={{ className: "text-red-500" }}
+                      />
+                      <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="name.last"
+                        label="Last Name"
+                        id="lastName"
+                        autoComplete="lastName"
+                        error={!!errors.lastName}
+                        helperText={errors.lastName}
+                        InputLabelProps={{ className: "text-gray-300" }}
+                        InputProps={{ className: "text-gray-300" }}
+                        FormHelperTextProps={{ className: "text-red-500" }}
+                      />
+                    </Stack>
+                    <Stack className="mt-2" direction="row" spacing={2}>
+                      <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="dob"
+                        label="Date of Birth"
+                        id="dob"
+                        type="date"
+                        InputLabelProps={{ shrink: true, className: "text-gray-300" }}
+                        InputProps={{ className: "text-gray-300" }}
+                        error={!!errors.dob}
+                        helperText={errors.dob}
+                        FormHelperTextProps={{ className: "text-red-500" }}
+                      />
+                      <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="phone"
+                        label="Phone Number"
+                        id="phoneNumber"
+                        type="number"
+                        error={!!errors.phone}
+                        helperText={errors.phone}
+                        InputLabelProps={{ className: "text-gray-300" }}
+                        InputProps={{ className: "text-gray-300" }}
+                        FormHelperTextProps={{ className: "text-red-500" }}
+                      />
+                    </Stack>
+                    <Stack className="mt-2" direction="row" spacing={2}>
+                      <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="bio"
+                        label="Write a brief about your bio"
+                        id="userBio"
+                        multiline
+                        rows={3}
+                        error={!!errors.bio}
+                        helperText={errors.bio}
+                        InputLabelProps={{ className: "text-gray-300" }}
+                        InputProps={{ className: "text-gray-300" }}
+                        FormHelperTextProps={{ className: "text-red-500" }}
+                      />
+                    </Stack>
+                    <Stack className="mt-2" direction="row" spacing={2}>
+                      <TextField
+                        type="file"
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="profilePhoto"
+                        id="profileImageUrl"
+                        error={!!errors.profilePhoto}
+                        helperText={errors.profilePhoto}
+                        InputLabelProps={{ className: "text-gray-300" }}
+                        InputProps={{ className: "text-gray-300" }}
+                        FormHelperTextProps={{ className: "text-red-500" }}
+                        inputProps={{
+                          accept: "image/*",
+                        }}
+                      />
+                    </Stack>
                   </Stack>
-                  <Stack sx={{ mt: 2 }} direction={'row'} spacing={2}>
-                    <TextField
-                      margin="normal"
-                      required
-                      fullWidth
-                      name="dob"
-                      label="Date of Birth"
-                      id="dob"
-                      type="date"
-                      InputLabelProps={{ shrink: true }}
-                      error={!!errors.dob}
-                      helperText={errors.dob}
-                      sx={{
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "white"
-                        },
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-                          color: "white"
-                        },
-                        "& .MuiInputLabel-outlined.Mui-focused": {
-                          color: "white"
-                        },
-                        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "white"
-                        },
-                        "& .MuiFormHelperText-root": {
-                          color: "#f44336"
-                        }
-                      }}
-                    />
-                    <TextField
-                      margin="normal"
-                      required
-                      fullWidth
-                      name="phone"
-                      label="Phone Number"
-                      id="phoneNumber"
-                      type="number"
-                      error={!!errors.phone}
-                      helperText={errors.phone}
-                      sx={{
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "white"
-                        },
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-                          color: "white"
-                        },
-                        "& .MuiInputLabel-outlined.Mui-focused": {
-                          color: "white"
-                        },
-                        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "white"
-                        },
-                        "& .MuiFormHelperText-root": {
-                          color: "#f44336"
-                        }
-                      }}
-                    />
-                  </Stack>
-                  <Stack sx={{ mt: 2 }} direction={'row'} spacing={2}>
-                    <TextField
-                      margin="normal"
-                      required
-                      fullWidth
-                      name="bio"
-                      label="Write a brief about your bio"
-                      id="userBio"
-                      multiline
-                      rows={3}
-                      error={!!errors.bio}
-                      helperText={errors.bio}
-                      sx={{
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "white"
-                        },
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-                          color: "white"
-                        },
-                        "& .MuiInputLabel-outlined.Mui-focused": {
-                          color: "white"
-                        },
-                        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "white"
-                        },
-                        "& .MuiFormHelperText-root": {
-                          color: "#f44336"
-                        }
-                      }}
-                    />
-                  </Stack>
-                  <Stack sx={{ mt: 2 }} direction={'row'} spacing={2}>
-                    <TextField
-                      type='file'
-                      margin="normal"
-                      required
-                      fullWidth
-                      name="profilePhoto"
-                      id="profileImageUrl"
-                      error={!!errors.profilePhoto}
-                      helperText={errors.profilePhoto}
-                      sx={{
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "white"
-                        },
-                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-                          color: "white"
-                        },
-                        "& .MuiInputLabel-outlined.Mui-focused": {
-                          color: "white"
-                        },
-                        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "white"
-                        },
-                        "& .MuiFormHelperText-root": {
-                          color: "#f44336"
-                        }
-                      }}
-                      inputProps={{
-                        accept: "image/*"
-                      }}
-                    />
-                  </Stack>
-                </Stack>
-              </Box>
-            </Stack>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              disabled={loading}
-              sx={{
-                mt: 3, 
-                mb: 2, 
-                "&.MuiButton-root:hover": {
-                  borderColor: '#1565c0',
-                  bgcolor: '#1565c0',
-                },
-              }}
-            >
-              {loading ? 'Creating Account...' : 'Submit'}
-            </Button>
+                </Box>
+              </Stack>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                disabled={loading}
+                className="mt-3 mb-2 bg-primary.main hover:bg-primary.dark text-gray-300"
+              >
+                {loading ? "Creating Account..." : "Submit"}
+              </Button>
+            </Box>
           </Box>
-        </Box>
-      </Container>
+        </div>
+      </main>
     </>
   );
 }

@@ -86,9 +86,6 @@ const Landing = () => {
                       Login
                     </button>
                   </Link>
-                  {/* <a href="/admin-login">
-                    <button type="button" className="btn btn-light">Admin Login</button>
-                  </a> */}
                 </div>
               </div>
             </div>
@@ -118,13 +115,6 @@ const Landing = () => {
               accomplishments.
               <br />
               <br />
-              {/* Mascot allows users to create a profile that functions as a digital
-            resume, including details such as work history, education, skills,
-            and recommendations. Users can connect with other professionals in
-            their field, join industry-specific groups, and follow companies
-            they're interested in.
-            <br />
-            <br /> */}
               Mascot serves as a valuable tool for professionals to build
               their personal brand, expand their network, and find new career
               opportunities.

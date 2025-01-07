@@ -6,7 +6,8 @@ import { useGetter } from "../../hooks/fetcher";
 import { selectSession } from "../auth/authSlice";
 import ConnectedUser from "../cards/ConnectedUser";
 import RequestedUser from "../cards/RequestedUser";
-import SuggestedUserCard from "../cards/SuggestedUserCard";
+import SuggestedUser from "../cards/SuggestedUser";
+import { ScrollArea } from "@client/components/ui/scroll-area";
 
 const NetworkComponent = () => {
   const session = useSelector(selectSession);
@@ -14,16 +15,19 @@ const NetworkComponent = () => {
     basePath + urls.connections.getByUser.replace(":user", session?.user);
   const suggestUrl = basePath + urls.user.suggestedUser.get;
   const requestUrl = basePath + urls.request.from;
+
   const {
     data: connectedUser,
     mutate: connectionMutate,
     isLoading: connectionIsLoading,
   } = useGetter(connectionsUrl);
+
   const {
     data: connectionRequests,
     mutate: requestMutate,
     isLoading: requestIsLoading,
   } = useGetter(requestUrl);
+
   const {
     data: suggestedUser,
     mutate: suggestMutate,
@@ -32,27 +36,45 @@ const NetworkComponent = () => {
 
   return (
     <>
-      <main className="networkContainer">
+      <main className="flex flex-col md:flex-row gap-6 p-6 bg-gray-900 text-gray-300 h-full">
         {/* Left Content */}
-        <div className="leftNetworkContent content">
-          <div className="card">
-            <h5>Welcome to Your Network!</h5>
-            <p>Discover people you may know, manage connection requests, and expand your network.</p>
-            <ul>
-              <li>💡 Check out connection suggestions to grow your professional circle.</li>
-              <li>📬 Respond to connection requests to build meaningful relationships.</li>
-              <li>🔍 Use the search feature to find specific users in your network.</li>
-            </ul>
-            <p>Start building your network today!</p>
-          </div>
+        <div className="md:w-1/3 bg-gray-800 rounded-lg shadow-md p-6">
+          <h5 className="text-lg font-bold mb-4">Your Connections</h5>
+          {connectionIsLoading && <Loading style={{ padding: "1rem", height: "none" }} />}
+          {!connectionIsLoading &&
+            (typeof connectedUser.data !== "string" &&
+              connectedUser?.data?.length > 0 ? (
+              <div
+                className="h-[80vh] overflow-y-auto"
+                style={{
+                  msOverflowStyle: "none",
+                  scrollbarWidth: "none",
+                }}
+              >
+                {connectedUser?.data?.map((eachUser) => (
+                  <ConnectedUser
+                    user={eachUser.users[0]}
+                    key={eachUser.users[0]._id}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-400">No Connections Yet</p>
+            ))}
         </div>
 
         {/* Center Content */}
-        <div className="centerNetworkContainer content">
-          <div className="card">
-            <div className="networkHead">
-              <h5>Connection Requests</h5>
-            </div>
+        {/* Connection Requests */}
+        <div className="md:w-1/3 bg-gray-800 rounded-lg shadow-md p-6">
+          <h5 className="text-lg font-bold mb-4">Connection Requests</h5>
+          <div
+            className="h-[80vh] overflow-y-auto"
+            style={{
+              msOverflowStyle: "none",
+              scrollbarWidth: "none",
+            }}
+          >
+            {requestIsLoading && <Loading style={{ padding: "1rem", height: "none" }} />}
             {!requestIsLoading &&
               (connectionRequests?.data?.length > 0 ? (
                 connectionRequests?.data?.map((cr, i) => (
@@ -66,61 +88,32 @@ const NetworkComponent = () => {
                   />
                 ))
               ) : (
-                <h5 style={{ marginTop: "1%" }}>No Requests found!!</h5>
+                <p className="text-gray-400">No Requests found!</p>
               ))}
-            {requestIsLoading && (
-              <Loading style={{ padding: "1rem", height: "none" }} />
-            )}
           </div>
-          <div className="card">
-            <div className="networkHead">
-              <h5>Suggestions for you</h5>
-            </div>
-            <div className="suggestedConnection">
-              {suggestIsLoading && (
-                <Loading style={{ padding: "1rem", height: "none" }} />
-              )}
-              {!suggestIsLoading &&
-                (suggestedUser?.data?.length > 0 ? (
-                  suggestedUser?.data?.map((eachUser) => {
-                    return (
-                      <SuggestedUserCard
-                        user={eachUser}
-                        key={eachUser._id}
-                        suggestMutate={suggestMutate}
-                        requestMutate={requestMutate}
-                      />
-                    );
-                  })
-                ) : (
-                  <h5>No Suggestions</h5>
-                ))}
-            </div>
-          </div>
+
         </div>
 
         {/* Right Content */}
-        <div className="rightNetworkContainer content">
-          <div className="card left-group">
-            <div className="networkHead">
-              <h5>Your connections</h5>
-            </div>
-            {connectionIsLoading && (
-              <Loading style={{ padding: "1rem", height: "none" }} />
-            )}
-            {!connectionIsLoading &&
-              (typeof connectedUser.data !== "string" &&
-              connectedUser?.data?.length > 0 ? (
-                connectedUser?.data?.map((eachUser) => {
-                  return (
-                    <ConnectedUser
-                      user={eachUser.users[0]}
-                      key={eachUser.users[0]._id}
-                    />
-                  );
-                })
+        <div className="md:w-1/3 bg-gray-800 rounded-lg shadow-md p-6">
+          <h5 className="text-lg font-bold mb-4">Suggestions for you</h5>
+          <div
+            className="h-[80vh] overflow-y-auto"
+            style={{
+              msOverflowStyle: "none",
+              scrollbarWidth: "none",
+            }}
+          >
+            {suggestIsLoading && <Loading style={{ padding: "1rem", height: "none" }} />}
+            {!suggestIsLoading &&
+              (suggestedUser?.data?.length > 0 ? (
+                <div className="">
+                  {suggestedUser.data.slice(0, 6).map((eachUser) => (
+                    <SuggestedUser user={eachUser} key={eachUser._id} suggestMutate={suggestMutate} />
+                  ))}
+                </div>
               ) : (
-                <h5>No Connections Yet</h5>
+                <p className="text-gray-400">No Suggestions</p>
               ))}
           </div>
         </div>

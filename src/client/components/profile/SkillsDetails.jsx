@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom"; // Assuming Next.js is used
+import { Link } from "react-router-dom";
 
 const SkillsDetails = ({ isAdmin, hasProfile, skills = [], others, onAddSkill }) => {
   if (!isAdmin || !hasProfile) {
@@ -7,37 +7,42 @@ const SkillsDetails = ({ isAdmin, hasProfile, skills = [], others, onAddSkill })
   }
 
   return (
-    <div className="profile-card card">
+    <div className="bg-gray-800 p-6 rounded-lg shadow-md text-gray-300">
       {/* Section Title */}
-      <div className="about-title section-title">
+      <div className="flex justify-between items-center border-b border-gray-700 pb-4 mb-4">
         {/* Title Text */}
-        <div className="title-text" style={{ fontSize: "22px", fontWeight: "bold" }}>Skills</div>
+        <h2 className="text-lg font-bold">Skills</h2>
 
         {/* Button Container */}
-        <div className="button-container" style={{ display: "flex", flexDirection: "row", gap: "2rem" }}>
-          {!others && (
-            <div>
-              {/* Add Skill Button */}
-              <Link data-bs-toggle="modal" onClick={onAddSkill}>
-                <span className="material-symbols-rounded about-edit">add</span>
-              </Link>
-            </div>
-          )}
-        </div>
+        {!others && (
+          <div>
+            {/* Add Skill Button */}
+            <Link
+              onClick={onAddSkill}
+              className="text-blue-500 hover:text-blue-400 cursor-pointer flex items-center"
+            >
+              <span className="material-symbols-rounded text-2xl">add</span>
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Skills Container */}
-      <div className="skill-container">
-        {/* Render Skills */}
+      <div>
         {skills.length > 0 ? (
-          skills.map((skill, index) => (
-            <div key={index} className="skill-main">
-              <div style={{ fontSize: "18px", fontWeight: "bold" }}>{skill?.name}</div>
-            </div>
-          ))
+          <ul className="space-y-2">
+            {skills.map((skill, index) => (
+              <li
+                key={index}
+                className="bg-gray-700 p-3 rounded-md text-sm font-semibold"
+              >
+                {skill?.name}
+              </li>
+            ))}
+          </ul>
         ) : (
           // No Skills Message
-          <p>No Skills added</p>
+          <p className="text-gray-400">No Skills added</p>
         )}
       </div>
     </div>

@@ -13,17 +13,15 @@ import 'react-toastify/dist/ReactToastify.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter>
-    <StyledEngineProvider injectFirst>
-      <ThemeProvider>
-        <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            <SocketProvider>
-              <Router />
-              <ToastContainer theme="dark"/>
-            </SocketProvider>
-          </PersistGate>
-        </Provider>
-      </ThemeProvider>
-    </StyledEngineProvider>
+    <ThemeProvider>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <SocketProvider>
+            <Router />
+            <ToastContainer theme="dark" />
+          </SocketProvider>
+        </PersistGate>
+      </Provider>
+    </ThemeProvider>
   </BrowserRouter>
 )

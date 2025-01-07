@@ -40,9 +40,10 @@ export default function Layout({ children, data }) {
         <Protected>
             {data.hasHeader && <Header />}
             <main>
-                {children}
+                <div className="mt-20 h-[90vh]">
+                    {children}
+                </div>
             </main>
-            {/* {data.hasFooter && <Footer />} */}
         </Protected>
     )
 }

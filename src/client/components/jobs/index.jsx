@@ -5,10 +5,8 @@ import urls, { serverPath, basePath } from "../../../utils/urls";
 import { Autocomplete, Chip, IconButton, TextField } from "@mui/material";
 import { useSelector } from "react-redux";
 import { selectSession } from "../auth/authSlice";
-import styles from "./styles.module.scss";
 import tempImage from "@client/assets/images/profile.png";
 import { toast } from "react-toastify";
-import SendIcon from '@mui/icons-material/Send';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -81,135 +79,163 @@ const JobContainer = () => {
   };
 
   const renderJobPost = () => (
-    <div className="card">
-      <div style={{fontSize: '20px' , textDecoration: 'none' }}>
-        <h4 style={{ }}>Checkout the referrals posted by you.</h4>
-        <Link to={`/userJob/${session?.user}`} className="linkStyle">My Referrals</Link>
+    <div className="bg-gray-900 text-gray-100 p-6 rounded-lg shadow-md">
+      <div className="mb-4 text-lg">
+        <h4 className="font-semibold">Checkout the referrals posted by you.</h4>
+        <Link
+          to={`/userJob/${session?.user}`}
+          className="text-blue-500 hover:underline"
+        >
+          My Referrals
+        </Link>
       </div>
-      <hr />
-      <h3 style={{ textAlign: "left" }}>Create Referral</h3>
-      <form className="jobForm">
-        <label className="jobLabel" htmlFor="job-title">Title</label>
-        <input
-          className="jobInput"
-          type="text"
-          id="job-title"
-          name="title"
-          required
-          onChange={handleChangeFormData}
-          value={formData.title}
-        />
-
-        <label className="jobLabel" htmlFor="company-name">Company Name</label>
-        <Autocomplete
-          sx={{
-            bgcolor: "white",
-            "& .MuiOutlinedInput-root.Mui-focused": {
-              color: "black",
-              borderColor: "black",
-            },
-            "& .MuiOutlinedInput-root": {
-              color: "black",
-            },
-            "& .MuiInputLabel-outlined.Mui-focused": {
-              color: "black",
-            },
-            "& .MuiInputLabel-outlined": {
-              color: "black",
-            },
-          }}
-          freeSolo
-          options={companyData?.data?.map((company) => company.name) || []}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              name="company"
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
-            />
-          )}
-          onChange={(_, value) => setCompany(value)}
-          value={company}
-        />
-
-        <label className="jobLabel" htmlFor="job-description">Description</label>
-        <textarea
-          className="jobInput"
-          id="job-description"
-          name="description"
-          required
-          onChange={handleChangeFormData}
-          value={formData.description}
-        />
-
-        <label className="jobLabel" htmlFor="job-skills">Skills</label>
-        <Autocomplete
-          sx={{
-            bgcolor: "white",
-            "& .MuiOutlinedInput-root.Mui-focused": {
-              color: "black",
-              borderColor: "black",
-            },
-            "& .MuiInputLabel-outlined.Mui-focused": {
-              color: "black",
-            },
-          }}
-          freeSolo
-          options={
-            skillsData?.data?.filter((skill) => !currentSkills.map((e) => e?._id)?.includes(skill?._id))?.map((e) => e?.name) || []
-          }
-          renderInput={(params) => <TextField {...params} />}
-          value={changedSkill}
-          onChange={(_, value, reason) => {
-            if (reason === "clear") {
-              setChangedSkill("");
-              return;
-            }
-            const selectedSkill = skillsData?.data?.find((k) => k.name === value);
-            if (selectedSkill && !currentSkills.some(s => s._id === selectedSkill._id)) {
-              setCurrentSkills(prev => [...prev, selectedSkill]);
-            }
-            setChangedSkill("");
-          }}
-        />
-        <div className={styles.changedSkillContainer}>
-          {currentSkills.map((skill, i) => (
-            <Chip
-              key={i}
-              label={skillsData?.data?.find((k) => k._id === skill._id)?.name}
-              variant="outlined"
-              onDelete={() => {
-                setCurrentSkills(prev => prev.filter((_, index) => index !== i));
-              }}
-            />
-          ))}
+      <hr className="border-gray-700 mb-6" />
+      <h3 className="text-2xl font-bold mb-4">Create Referral</h3>
+      <form className="space-y-4">
+        <div>
+          <label htmlFor="job-title" className="block text-sm font-medium mb-1">
+            Title
+          </label>
+          <input
+            type="text"
+            id="job-title"
+            name="title"
+            required
+            className="w-full p-2 bg-gray-800 border border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={handleChangeFormData}
+            value={formData.title}
+          />
         </div>
 
-        <label className="jobLabel" htmlFor="job-location">Apply Before</label>
-        <input
-          className="jobInput"
-          type="date"
-          id="job-location"
-          name="endsAt"
-          required
-          onChange={handleChangeFormData}
-          value={formData.endsAt}
-        />
+        <div>
+          <label htmlFor="company-name" className="block text-sm font-medium mb-1">
+            Company Name
+          </label>
+          <Autocomplete
+            sx={{
+              bgcolor: "transparent",
+              "& .MuiOutlinedInput-root.Mui-focused": {
+                color: "#fff",
+                borderColor: "#1E40AF",
+              },
+              "& .MuiInputLabel-outlined.Mui-focused": {
+                color: "#fff",
+              },
+            }}
+            freeSolo
+            options={companyData?.data?.map((company) => company.name) || []}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                name="company"
+                value={company}
+                onChange={(e) => setCompany(e.target.value)}
+              />
+            )}
+            onChange={(_, value) => setCompany(value)}
+            value={company}
+          />
+        </div>
 
-        <label className="jobLabel" htmlFor="job-salary">Experience in Years</label>
-        <input
-          className="jobInput"
-          type="number"
-          id="job-salary"
-          name="experienceYears"
-          required
-          onChange={handleChangeFormData}
-          value={formData.experienceYears}
-        />
+        <div>
+          <label htmlFor="job-description" className="block text-sm font-medium mb-1">
+            Description
+          </label>
+          <textarea
+            id="job-description"
+            name="description"
+            required
+            className="w-full p-2 bg-gray-800 border border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={handleChangeFormData}
+            value={formData.description}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="job-skills" className="block text-sm font-medium mb-1">
+            Skills
+          </label>
+          <Autocomplete
+            sx={{
+              bgcolor: "transparent",
+              "& .MuiOutlinedInput-root.Mui-focused": {
+                color: "#fff",
+                borderColor: "#1E40AF",
+              },
+              "& .MuiInputLabel-outlined.Mui-focused": {
+                color: "#fff",
+              },
+            }}
+            freeSolo
+            options={
+              skillsData?.data
+                ?.filter((skill) =>
+                  !currentSkills.map((e) => e?._id)?.includes(skill?._id)
+                )
+                ?.map((e) => e?.name) || []
+            }
+            renderInput={(params) => <TextField {...params} />}
+            value={changedSkill}
+            onChange={(_, value, reason) => {
+              if (reason === "clear") {
+                setChangedSkill("");
+                return;
+              }
+              const selectedSkill = skillsData?.data?.find((k) => k.name === value);
+              if (selectedSkill && !currentSkills.some((s) => s._id === selectedSkill._id)) {
+                setCurrentSkills((prev) => [...prev, selectedSkill]);
+              }
+              setChangedSkill("");
+            }}
+          />
+          <div className="flex flex-wrap gap-2 mt-2">
+            {currentSkills.map((skill, i) => (
+              <Chip
+                key={i}
+                label={skillsData?.data?.find((k) => k._id === skill._id)?.name}
+                variant="outlined"
+                className="text-gray-100 border-gray-500"
+                onDelete={() => {
+                  setCurrentSkills((prev) => prev.filter((_, index) => index !== i));
+                }}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="job-location" className="block text-sm font-medium mb-1">
+            Apply Before
+          </label>
+          <input
+            type="date"
+            id="job-location"
+            name="endsAt"
+            required
+            className="w-full p-2 bg-gray-800 border border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={handleChangeFormData}
+            value={formData.endsAt}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="job-salary" className="block text-sm font-medium mb-1">
+            Experience in Years
+          </label>
+          <input
+            type="number"
+            id="job-salary"
+            name="experienceYears"
+            required
+            className="w-full p-2 bg-gray-800 border border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={handleChangeFormData}
+            value={formData.experienceYears}
+          />
+        </div>
 
         <button
-          className="submitButton"
-          style={{ width: "100%" }}
+          type="button"
+          className="w-full bg-blue-600 hover:bg-blue-500 text-gray-300 py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           onClick={handleCreateCompany}
         >
           Post Job
@@ -224,44 +250,71 @@ const JobContainer = () => {
     }
 
     return (
-      <div className="card job-card-container">
-        <div className="container-title">
-          <div style={{ fontSize: "18px", fontWeight: 600, color: "white" }}>
-            Referrals, recommended for you
-          </div>
+      <div className="bg-gray-800 p-2 rounded-lg">
+        <div className="mb-6 text-xl font-semibold text-gray-300">
+          Referrals, recommended for you
         </div>
         {jobData.map((job) => (
-          <div className="card" style={{ display: "flex", flexDirection: "column", boxShadow: "1px 1px 20px 0px black" }} key={job._id}>
-            <div className="userProfile">
-              <div className="profileImgPost">
-                <img src={job?.from?.profilePhoto ? serverPath + job.from.profilePhoto : tempImage} alt="profileImg" />
+          <div
+            key={job._id}
+            className="bg-gray-700 p-4 mb-6 rounded-lg shadow-md flex flex-col space-y-4"
+          >
+            {/* User Profile Section */}
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 rounded-full overflow-hidden">
+                <img
+                  src={job?.from?.profilePhoto ? serverPath + job.from.profilePhoto : tempImage}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <div className="userInfo">
-                <h5>{job.from.name.first} {job.from.name.last}</h5>
-                <p>{job.from.bio}</p>
+              <div className="text-gray-300">
+                <h5 className="text-lg font-medium">{job.from.name.first} {job.from.name.last}</h5>
+                <p className="text-sm text-gray-400">{job.from.bio}</p>
               </div>
             </div>
-            <div className="company-info">
-              <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-                <div style={{ color: "white", fontSize: "18px", fontWeight: 450 }} className="job-name">
-                  {job.title} ({job.description})
-                </div>
+
+            {/* Job Details Section */}
+            <div className="flex items-center justify-around text-gray-300 gap-5">
+              <div className="text-lg font-medium">
+                <p className="me-3 mb-2">
+                  Role:
+                </p>
+                {job.title}
               </div>
-              <div className="company-name">
-                At <span style={{ fontWeight: "bold" }}>{job.company.name}</span>
+              {/* <div className="font-medium">
+                <p className="me-3 mb-2">
+                  Job Description:
+                </p>
+                {job.description}
+              </div> */}
+              <div className="text-gray-300">
+                Company: <div className="mt-2 font-semibold">{job.company.name}</div>
               </div>
-              <div>Skills Required: {job?.skills.map((skill, i) => (
-                <Chip variant="outlined" key={i} label={skill?.name} />
-              ))}</div>
-              <div className="posted-time">Experience Years: {job.experienceYears}</div>
-              <div className="posted-time">Apply Before: {formatDate(job.endsAt)}</div>
-              <IconButton
-                sx={{ position: "absolute", bottom: "0.5rem", right: "1rem" }}
-                onClick={() => navigate(`/chat?userId=${job?.from?._id}`)}
-              >
-                <SendIcon sx={{ color: "#3297d1", fontSize: "2rem" }} />
-              </IconButton>
+              <div className="text-gray-400">Experience Years: <div className="mt-2">{job.experienceYears}</div></div>
+              <div className="text-gray-400">Apply Before: <div className="mt-2">{formatDate(job.endsAt)}</div></div>
             </div>
+            <div className="text-gray-400">
+              Skills Required:
+              <div className="flex flex-wrap gap-2 mt-1">
+                {job?.skills.map((skill, i) => (
+                  <span
+                    key={i}
+                    className="px-3 py-1 bg-blue-500 text-gray-300 text-sm rounded-full"
+                  >
+                    {skill?.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Action Button */}
+            <button
+              onClick={() => navigate(`/chat?userId=${job?.from?._id}`)}
+              className="self-end px-4 py-2 bg-blue-600 text-gray-300 rounded-full shadow hover:bg-blue-500 transition"
+            >
+              Send Message
+            </button>
           </div>
         ))}
       </div>
@@ -269,19 +322,23 @@ const JobContainer = () => {
   };
 
   const renderJobGuidance = () => (
-    <div className="card job-helper">
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <div style={{ fontSize: "24px", fontWeight: 500, color: "white" }}>
-          Job Seeker Guidance
-        </div>
+    <div className="bg-gray-800 text-gray-300 p-6 rounded-lg shadow-md space-y-6">
+      <div>
+        <h2 className="text-2xl font-semibold">Job Seeker Guidance</h2>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: "5px", fontSize: "18px", color: "#cacaca" }}>
-        <img src={jobHuntImg} width="80%" alt="job-hunt" style={{ paddingLeft: "10%" }} />
-        <div>
+      <div className="text-lg text-gray-300 space-y-4">
+        <img
+          src={jobHuntImg}
+          alt="job-hunt"
+          className="w-4/5 mx-auto rounded-lg shadow-md"
+        />
+        <p>
           Job postings are shared by alumni who have referral opportunities. You can view the job description to determine if it aligns with your needs and interests.
-        </div>
-        <hr />
-        If you're interested in a position, feel free to reach out to the alumni directly through chat and inquire about a referral.
+        </p>
+        <hr className="border-gray-600" />
+        <p>
+          If you're interested in a position, feel free to reach out to the alumni directly through chat and inquire about a referral.
+        </p>
       </div>
     </div>
   );
@@ -289,14 +346,18 @@ const JobContainer = () => {
   const isAlumni = tempUser?.data?.role === "alumni";
 
   return (
-    <main className="job-container">
-      <div className="container-main">
+    <main className="flex flex-col lg:flex-row bg-gray-900 text-gray-300 p-4 gap-6">
+      {/* Main Content */}
+      <div className="flex-1 bg-gray-800 p-6 rounded-lg shadow-lg">
         {isAlumni ? renderJobPost() : renderJobList()}
       </div>
-      <div className="container-right">
+
+      {/* Right Sidebar */}
+      <div className="w-full lg:w-2/5 bg-gray-800 p-6 rounded-lg shadow-lg">
         {!isAlumni ? renderJobGuidance() : renderJobList()}
       </div>
     </main>
+
   );
 };
 

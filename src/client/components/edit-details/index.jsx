@@ -94,11 +94,6 @@ const GetUserDetails = () => {
       toast.error("Something went wrong!!")
     }
   }
-
-  // useEffect(() => {
-  //   // console.log(updatedUser);
-  // }, [updatedUser])
-
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
 
@@ -111,155 +106,232 @@ const GetUserDetails = () => {
   };
 
   return (
-    <main className="mainFormContainer">
-      <h1 style={{ fontSize: "3rem", fontWeight: "600" }}>Edit Your Profile</h1>
-      <section className="formSection">
-        <div className="formImgContainer" style={{ maxWidth: "500px", maxHeight: "425px" }}>
-          <img src={ConnectedWorld} alt="connected-world" />
+    <main className="bg-gray-800 text-gray-300 h-full flex flex-col items-center justify-center px-4 py-8">
+      <h1 className="text-4xl font-bold mb-8">Edit Your Profile</h1>
+      <section className="flex flex-col md:flex-row items-center justify-center w-full">
+        <div className="md:max-w-[500px] md:max-h-[425px] mb-8 md:mb-0 md:mr-8">
+          <img src={ConnectedWorld} alt="connected-world" className="w-full h-auto" />
         </div>
-        <div className="formContainer card" style={{ width: "50%" }}>
+        <div className="bg-gray-700 rounded-lg shadow-md p-6 w-full md:w-1/2">
           {activeStep === 0 ? (
-            <form id='detailForm' style={{ width: "100%" }}>
-              <h2>Personal Details</h2>
-              <div className="twoInput mt-1">
-                <div className="">
-                  <label htmlFor="">First Name</label>
+            <form id="detailForm" className="w-full">
+              <h2 className="text-2xl font-bold mb-4">Personal Details</h2>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label htmlFor="firstName" className="block mb-1">
+                    First Name
+                  </label>
                   <input
                     type="text"
-                    className="firstName mt-1"
+                    className="bg-gray-800 rounded-md px-3 py-2 w-full text-gray-300 focus:outline-none"
                     name="firstName"
                     placeholder="First Name"
                     value={firstname}
                     onChange={(e) => setFirstname(e.target.value)}
-                  // style={{ color: '#808080', cursor: 'not-allowed' }}
                   />
                 </div>
-                <div className="">
-                  <label htmlFor="">Last Name</label>
+                <div>
+                  <label htmlFor="lastName" className="block mb-1">
+                    Last Name
+                  </label>
                   <input
                     type="text"
-                    className="lastName mt-1"
+                    className="bg-gray-800 rounded-md px-3 py-2 w-full text-gray-300 focus:outline-none"
                     name="lastName"
                     placeholder="Last Name"
                     value={lastname}
                     onChange={(e) => setLastname(e.target.value)}
-                  // style={{ color: '#808080', cursor: 'not-allowed' }}
                   />
                 </div>
               </div>
-              <div className="twoInput mt-1">
-                <div className="">
-                  <label htmlFor="">Date of Birth</label>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label htmlFor="dob" className="block mb-1">
+                    Date of Birth
+                  </label>
                   <input
                     type="date"
-                    className="dob mt-1"
+                    className="bg-gray-800 rounded-md px-3 py-2 w-full text-gray-300 focus:outline-none"
                     name="dob"
                     value={dob}
                     onChange={(e) => setDob(e.target.value)}
                   />
                 </div>
-                <div className="">
-                  <label htmlFor="">Phone Number</label>
+                <div>
+                  <label htmlFor="phone" className="block mb-1">
+                    Phone Number
+                  </label>
                   <input
                     type="text"
-                    className="profileImage mt-1"
+                    className="bg-gray-800 rounded-md px-3 py-2 w-full text-gray-300 focus:outline-none"
                     name="phone"
-                    placeholder="PhoneNumber"
+                    placeholder="Phone Number"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                   />
                 </div>
               </div>
-              <div className="oneInput mt-2">
-                <label htmlFor="">Bio</label>
-                <textarea id="bio" name="bio" rows="2" cols="50" value={bio} onChange={(e) => setBio(e.target.value)} />
+              <div className="mb-4">
+                <label htmlFor="bio" className="block mb-1">
+                  Bio
+                </label>
+                <textarea
+                  id="bio"
+                  name="bio"
+                  rows="2"
+                  className="bg-gray-800 rounded-md px-3 py-2 w-full text-gray-300 focus:outline-none"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                />
               </div>
-              <button type='button' onClick={clickHandler} className="submitButton mt-2" id="detailButton">
+              <button
+                type="button"
+                onClick={clickHandler}
+                className="bg-blue-500 hover:bg-blue-600 text-gray-300 font-bold py-2 px-4 rounded-md w-full"
+                id="detailButton"
+              >
                 Edit Personal Details
               </button>
             </form>
           ) : null}
 
           {Object.keys(loggedInUser?.data).includes("profile") && activeStep === 1 ? (
-            <form id="detailForm" onSubmit={addressHandler} style={{ width: "100%" }}>
-              <h2>Address Details</h2>
-              <div className="twoInput">
-                <div className="div">
-                  {/* <label htmlFor="name">Name</label> */}
-                  <input type="text" name="name" placeholder='Name' id="name" value={formData?.name} onChange={handleInputChange} />
+            <form id="detailForm" onSubmit={addressHandler} className="w-full">
+              <h2 className="text-2xl font-bold mb-4">Address Details</h2>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <input
+                    type="text"
+                    className="bg-gray-800 rounded-md px-3 py-2 w-full text-gray-300 focus:outline-none"
+                    name="name"
+                    placeholder="Name"
+                    value={formData?.name}
+                    onChange={handleInputChange}
+                  />
                 </div>
-                <div className="div">
-
-                  {/* <label htmlFor="buildingName">Building Name</label> */}
-                  <input type="text" name="buildingName" placeholder='Building Name' id="buildingName" value={formData?.buildingName} onChange={handleInputChange} />
-                </div>
-              </div>
-              <div className="oneInput">
-                {/* <label htmlFor="">Adress Line 1</label> */}
-                <input type="text" name="line1" placeholder='Address Line 1' id='line1' value={formData?.line1} onChange={handleInputChange} />
-              </div>
-              <div className="oneInput">
-                {/* <label htmlFor="">Adress Line 2</label> */}
-                <input type="text" name="line2" placeholder='Adress Line 2' id='line' value={formData?.line2} onChange={handleInputChange} />
-              </div>
-              <div className="oneInput">
-                {/* <label htmlFor="">Street</label> */}
-                <input type="text" name="street" placeholder='Street name' id='street' value={formData?.street} onChange={handleInputChange} />
-              </div>
-              <div className="twoInput">
-                <div className="div">
-                  <input type="text" name='city' placeholder='city' id='city' value={formData?.city} onChange={handleInputChange} />
-                </div>
-                <div className="div">
-                  <input type="text" name="state" placeholder='State' id="state" value={formData?.state} onChange={handleInputChange} />
-                </div>
-
-              </div>
-              <div className="twoInput">
-                <div className="div">
-                  {/* <label htmlFor="state">State</label> */}
-                  <input type="text" name="country" placeholder='country' id="country" value={formData?.country} onChange={handleInputChange} />
-                </div>
-                <div className="div">
-
-                  {/* <label htmlFor="pinCode">Pin Code</label> */}
-                  <input type="number" name="pinCode" placeholder='Pin Code' id="pinCode" value={formData?.pinCode} onChange={handleInputChange} />
+                <div>
+                  <input
+                    type="text"
+                    className="bg-gray-800 rounded-md px-3 py-2 w-full text-gray-300 focus:outline-none"
+                    name="buildingName"
+                    placeholder="Building Name"
+                    value={formData?.buildingName}
+                    onChange={handleInputChange}
+                  />
                 </div>
               </div>
-              <button type='submit' className="submitButton mt-2" id="detailButton">
+              <div className="mb-4">
+                <input
+                  type="text"
+                  className="bg-gray-800 rounded-md px-3 py-2 w-full text-gray-300 focus:outline-none"
+                  name="line1"
+                  placeholder="Address Line 1"
+                  value={formData?.line1}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="mb-4">
+                <input
+                  type="text"
+                  className="bg-gray-800 rounded-md px-3 py-2 w-full text-gray-300 focus:outline-none"
+                  name="line2"
+                  placeholder="Address Line 2"
+                  value={formData?.line2}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="mb-4">
+                <input
+                  type="text"
+                  className="bg-gray-800 rounded-md px-3 py-2 w-full text-gray-300 focus:outline-none"
+                  name="street"
+                  placeholder="Street name"
+                  value={formData?.street}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <input
+                    type="text"
+                    className="bg-gray-800 rounded-md px-3 py-2 w-full text-gray-300 focus:outline-none"
+                    name="city"
+                    placeholder="City"
+                    value={formData?.city}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    className="bg-gray-800 rounded-md px-3 py-2 w-full text-gray-300 focus:outline-none"
+                    name="state"
+                    placeholder="State"
+                    value={formData?.state}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <input
+                    type="text"
+                    className="bg-gray-800 rounded-md px-3 py-2 w-full text-gray-300 focus:outline-none"
+                    name="country"
+                    placeholder="Country"
+                    value={formData?.country}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <input
+                    type="number"
+                    className="bg-gray-800 rounded-md px-3 py-2 w-full text-gray-300 focus:outline-none"
+                    name="pinCode"
+                    placeholder="Pin Code"
+                    value={formData?.pinCode}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </div>
+              <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-gray-300 font-bold py-2 px-4 rounded-md w-full">
                 Edit
               </button>
             </form>
           ) : null}
         </div>
       </section>
-      {Object.keys(loggedInUser?.data).includes("profile") && <MobileStepper
-        variant="progress"
-        steps={2}
-        position="static"
-        activeStep={activeStep}
-        sx={{ width: 500, height: 40 }}
-        nextButton={
-          <Button size="small" onClick={handleNext} disabled={activeStep === 1}>
-            Next
-            {theme.direction === 'rtl' ? (
-              <KeyboardArrowLeft />
-            ) : (
-              <KeyboardArrowRight />
-            )}
-          </Button>
-        }
-        backButton={
-          <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-            {theme.direction === 'rtl' ? (
-              <KeyboardArrowRight />
-            ) : (
-              <KeyboardArrowLeft />
-            )}
-            Back
-          </Button>
-        }
-      />}
+      {Object.keys(loggedInUser?.data).includes("profile") && (
+        <MobileStepper
+          variant="progress"
+          steps={2}
+          position="static"
+          activeStep={activeStep}
+          className="mt-8 w-full md:w-[500px]"
+          nextButton={
+            <Button
+              size="small"
+              onClick={handleNext}
+              disabled={activeStep === 1}
+              className="bg-blue-500 hover:bg-blue-600 text-gray-300"
+            >
+              Next
+              {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+            </Button>
+          }
+          backButton={
+            <Button
+              size="small"
+              onClick={handleBack}
+              disabled={activeStep === 0}
+              className="bg-blue-500 hover:bg-blue-600 text-gray-300"
+            >
+              {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+              Back
+            </Button>
+          }
+        />
+      )}
     </main>
   );
 };

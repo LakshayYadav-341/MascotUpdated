@@ -143,332 +143,166 @@ export default function Institute() {
     }
 
     return (
-        <Stack direction={"row"} gap={"1rem"} padding={"1rem"}>
-            <Box
-                width={"25%"}
-                flex
-                flexDirection={"column"}
-                gap={"1rem"}
-                minHeight={"80vh"}
-            >
-                <Typography variant="h4">Institutes</Typography>
-                <Box
-                    width={"100%"}
-                    flex
-                    flexDirection={"row"}
-                    gap={"1rem"}
-                >
-                    <Box
-                    >
-                        {/* <Button
-                            variant="contained"
-                            fullWidth
+        <div className="flex flex-col md:flex-row gap-4 p-4">
+            {/* Institutes List Section */}
+            <div className="flex flex-col w-full md:w-1/4 gap-4 bg-gray-800 p-4 rounded-lg shadow-lg">
+                <h2 className="text-2xl font-bold text-gray-300">Institutes</h2>
+                <div className="flex flex-col gap-4">
+                    {instituteData?.data?.map((e, i) => (
+                        <div
+                            key={i}
+                            className="flex justify-between items-center bg-gray-700 p-3 rounded-lg"
                         >
-                            New Institute
-                        </Button> */}
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: "1rem"
-                            }}
-                        >
-                            {instituteData?.data?.map((e, i) => (
-                                <Box
-                                    sx={{
-                                        display: "flex",
-                                        flexDirection: "row",
-                                        justifyContent: "space-between"
-                                    }}
-                                    key={i}
-                                >
-                                    <Paper
-                                        sx={{
-                                            padding: ".5rem",
-                                            width: "95%"
-                                        }}
-                                    >
-                                        <Typography variant="body1">{e?.name}</Typography>
-                                    </Paper>
-                                    <IconButton color="primary" aria-label="add to shopping cart" onClick={() => { deleteHandler(e?._id) }}>
-                                        <DeleteIcon sx={{ color: "red" }} />
-                                    </IconButton>
-                                </Box>
-                            ))}
-                        </Box>
-                    </Box>
-                </Box>
-            </Box>
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "1rem",
-                    width: "75%"
-                }}
-            >
-                <Paper
-                    sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "1rem",
-                        padding: "1rem"
-                    }}
-                >
-                    <Typography variant="h5">Institute Name</Typography>
-                    <TextField
-                        variant="filled"
-                        label="Enter Institute Name"
+                            <p className="text-gray-300">{e?.name}</p>
+                            <button
+                                className="text-red-500 hover:text-red-700"
+                                onClick={() => deleteHandler(e?._id)}
+                            >
+                                🗑️
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Form Section */}
+            <div className="flex flex-col w-full md:w-3/4 gap-6">
+                {/* Institute Name */}
+                <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
+                    <h3 className="text-xl font-semibold text-gray-300 mb-2">Institute Name</h3>
+                    <input
+                        type="text"
+                        placeholder="Enter Institute Name"
                         name="name"
                         onChange={handleChangeFormData}
+                        className="w-full p-2 bg-gray-700 text-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                </Paper>
-                <Paper
-                    sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "1rem",
-                        padding: "1rem"
-                    }}
-                >
-                    <Typography variant="h5">Enter Institute Address</Typography>
-                    <Stack direction={"row"} gap={"1rem"}>
-                        <TextField
-                            variant="filled"
-                            label="Line 1"
+                </div>
+
+                {/* Institute Address */}
+                <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
+                    <h3 className="text-xl font-semibold text-gray-300 mb-2">
+                        Enter Institute Address
+                    </h3>
+                    <div className="flex flex-wrap gap-4">
+                        <input
+                            type="text"
+                            placeholder="Line 1"
                             name="address.line1"
                             required
-                            fullWidth
                             onChange={handleChangeFormData}
+                            className="w-full md:w-1/2 p-2 bg-gray-700 text-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        <TextField
-                            variant="filled"
-                            label="Line 2"
+                        <input
+                            type="text"
+                            placeholder="Line 2"
                             name="address.line2"
-                            fullWidth
+                            onChange={handleChangeFormData}
+                            className="w-full md:w-1/2 p-2 bg-gray-700 text-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                    </Stack>
-                    <Stack direction={"row"} gap={"1rem"}>
-                        <TextField
-                            variant="filled"
-                            label="Landmark"
+                    </div>
+                    <div className="flex flex-wrap gap-4">
+                        <input
+                            type="text"
+                            placeholder="Landmark"
                             name="address.landmark"
                             onChange={handleChangeFormData}
-                            fullWidth
+                            className="w-full md:w-1/2 p-2 bg-gray-700 text-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                    </Stack>
-                    <Stack direction={"row"} gap={"1rem"}>
-                        <TextField
-                            variant="filled"
-                            label="Street"
+                        <input
+                            type="text"
+                            placeholder="Street"
                             name="address.street"
-                            onChange={handleChangeFormData}
                             required
-                            fullWidth
+                            onChange={handleChangeFormData}
+                            className="w-full md:w-1/2 p-2 bg-gray-700 text-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        <TextField
-                            variant="filled"
-                            label="City"
+                    </div>
+                    <div className="flex flex-wrap gap-4">
+                        <input
+                            type="text"
+                            placeholder="City"
                             name="address.city"
-                            onChange={handleChangeFormData}
-                            fullWidth
                             required
+                            onChange={handleChangeFormData}
+                            className="w-full md:w-1/2 p-2 bg-gray-700 text-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                    </Stack>
-                    <Stack direction={"row"} gap={"1rem"}>
-                        <TextField
-                            variant="filled"
-                            label="State"
+                        <input
+                            type="text"
+                            placeholder="State"
                             name="address.state"
-                            onChange={handleChangeFormData}
                             required
-                            fullWidth
+                            onChange={handleChangeFormData}
+                            className="w-full md:w-1/2 p-2 bg-gray-700 text-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                    </Stack>
-                    <Stack direction={"row"} gap={"1rem"}>
-                        <Box width={"70%"}>
-                            <TextField
-                                variant="filled"
-                                label="Country"
-                                name="address.country"
-                                onChange={handleChangeFormData}
-                                required
-                                fullWidth
-                            />
-                        </Box>
-                        <Box width={"30%"}>
-                            <TextField
-                                variant="filled"
-                                label="Pin code"
-                                name="address.pinCode"
-                                onChange={handleChangeFormData}
-                                required
-                                fullWidth
-                                type="number"
-                                autoComplete="off"
-                                inputProps={{
-                                    "-webkit-outer-spin-button": {
-                                        "-webkit-appearance": "none",
-                                        appearance: "none",
+                    </div>
+                    <div className="flex gap-4">
+                        <input
+                            type="text"
+                            placeholder="Country"
+                            name="address.country"
+                            required
+                            onChange={handleChangeFormData}
+                            className="w-3/4 p-2 bg-gray-700 text-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Pin code"
+                            name="address.pinCode"
+                            required
+                            onChange={handleChangeFormData}
+                            className="w-1/4 p-2 bg-gray-700 text-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                </div>
 
-                                    }
-                                }}
-                            />
-                        </Box>
-                    </Stack>
-                </Paper>
-                <Paper
-                    sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "1rem",
-                        padding: "1rem",
-                        typography: "body1"
-                    }}
-                >
-                    <Typography variant="h5">Add Socials</Typography>
-
-                    <Stack direction={"row"} gap={"1rem"} alignItems={"center"} justifyContent={"center"}>
-                        <Box width={"90%"}>
-                            <TextField
-                                variant="filled"
-                                label="Email"
-                                name="email"
-                                fullWidth
-                                autoComplete="email"
-                                onChange={(e) => setEmail(e.target.value.trim())}
-                                value={email}
-                                type="email"
-                            />
-                        </Box>
-                        <Box width={"10%"}>
-                            <Button
-                                variant="contained"
-                                fullWidth
-                                onClick={handleAddEmail}
-                            >
-                                Add Email
-                            </Button>
-                        </Box>
-                    </Stack>
-                    <Box>
+                {/* Socials Section */}
+                <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
+                    <h3 className="text-xl font-semibold text-gray-300 mb-2">Add Socials</h3>
+                    <div className="flex items-center gap-4 mb-2">
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value.trim())}
+                            className="w-full p-2 bg-gray-700 text-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <button
+                            onClick={handleAddEmail}
+                            className="p-2 bg-blue-500 text-gray-300 rounded-md hover:bg-blue-600"
+                        >
+                            Add
+                        </button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
                         {formData.contact.emails.map((e, i) => (
-                            <Chip label={e} onDelete={e => handleRemoveEmail(i)} />
-                        ))}
-                    </Box>
-
-                    <Stack direction={"row"} gap={"1rem"} alignItems={"center"} justifyContent={"center"}>
-                        <Box width={"90%"}>
-                            <TextField
-                                variant="filled"
-                                label="Phone No."
-                                name="phone"
-                                fullWidth
-                                autoComplete="phone"
-                                onChange={(e) => setPhone(e.target.value.trim())}
-                                value={phone}
-                                type="number"
-                            />
-                        </Box>
-                        <Box width={"10%"}>
-                            <Button
-                                variant="contained"
-                                fullWidth
-                                onClick={handleAddPhone}
+                            <div
+                                key={i}
+                                className="flex items-center gap-2 bg-gray-700 p-2 rounded-md"
                             >
-                                Add Phone
-                            </Button>
-                        </Box>
-                    </Stack>
-                    <Box>
-                        {formData.contact.phone.map((e, i) => (
-                            <Chip label={e} onDelete={e => handleRemovePhone(i)} />
+                                <span className="text-gray-300">{e}</span>
+                                <button
+                                    onClick={() => handleRemoveEmail(i)}
+                                    className="text-red-500 hover:text-red-700"
+                                >
+                                    ✖
+                                </button>
+                            </div>
                         ))}
-                    </Box>
+                    </div>
+                    {/* Add similar inputs for Phone Numbers and Social Media Links */}
+                </div>
 
-                    <Stack direction={"row"} gap={"1rem"}>
-                        <Box width={"40%"}>
-                            <TextField
-                                variant="filled"
-                                label="Facebook Page URL"
-                                name="contact.social.facebook"
-                                fullWidth
-                                onChange={handleChangeFormData}
-                                type="url"
-                            />
-                        </Box>
-                        <Box width={"60%"}>
-                            <TextField
-                                variant="filled"
-                                label="Insta Page URL"
-                                name="contact.social.instagram"
-                                fullWidth
-                                onChange={handleChangeFormData}
-                                type="url"
-                            />
-                        </Box>
-                    </Stack>
-                    <Stack direction={"row"} gap={"1rem"}>
-                        <Box width={"60%"}>
-                            <TextField
-                                variant="filled"
-                                label="Twitter Handle"
-                                name="contact.social.x"
-                                fullWidth
-                                onChange={handleChangeFormData}
-                                type="url"
-                            />
-                        </Box>
-                        <Box width={"40%"}>
-                            <TextField
-                                variant="filled"
-                                label="Quora Handle"
-                                name="contact.social.quora"
-                                fullWidth
-                                onChange={handleChangeFormData}
-                                type="url"
-                            />
-                        </Box>
-                    </Stack>
-
-                    <Stack direction={"row"} gap={"1rem"}>
-                        <Box width={"20%"}>
-                            <TextField
-                                variant="filled"
-                                label="Social Media Name"
-                                name="name"
-                                fullWidth
-                                onChange={handleChangeOtherHandle}
-                                type="url"
-                                value={otherHandle.name}
-                            />
-                        </Box>
-                        <Box width={"70%"}>
-                            <TextField
-                                variant="filled"
-                                label="Social Media URL"
-                                name="value"
-                                fullWidth
-                                onChange={handleChangeOtherHandle}
-                                type="url"
-                                value={otherHandle.value}
-                            />
-                        </Box>
-                        <Box width={"10%"}>
-                            <Button
-                                variant="contained"
-                                fullWidth
-                                onClick={handleAddSocial}
-                            >
-                                Add Phone
-                            </Button>
-                        </Box>
-                    </Stack>
-                </Paper>
-                <Box width={"100%"}>
-                    <Button variant="contained" fullWidth onClick={handleFormSubmit}>Submit</Button>
-                </Box>
-            </Box>
-        </Stack>
+                {/* Submit Button */}
+                <div>
+                    <button
+                        onClick={handleFormSubmit}
+                        className="w-full p-2 bg-green-500 text-gray-300 rounded-md hover:bg-green-600"
+                    >
+                        Submit
+                    </button>
+                </div>
+            </div>
+        </div>
     )
 }

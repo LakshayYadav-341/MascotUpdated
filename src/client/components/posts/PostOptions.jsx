@@ -1,18 +1,30 @@
-import profile from "@client/assets/images/profile.png";
-import urls, { basePath } from "@utils/urls";
-import axios from "axios";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { serverPath } from "../../../utils/urls";
-import { selectLoggedInUser, selectSession } from "../auth/authSlice";
+import { Image, FileText } from "lucide-react";
+import axios from "axios";
 import { toast } from "react-toastify";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@client/components/ui/dialog";
+import { Button } from "@client/components/ui/button";
+import { Input } from "@client/components/ui/input";
+import { Textarea } from "@client/components/ui/textarea";
+import { Card, CardContent } from "@client/components/ui/card";
+
+import urls, { basePath } from "@utils/urls";
+import { selectSession } from "../auth/authSlice";
+
 const PostOptions = ({ isPostChanged, setIsPostChanged }) => {
-  const tempUser = useSelector(selectLoggedInUser);
   const session = useSelector(selectSession);
   const [postCaption, setPostCaption] = useState("");
   const [postImages, setPostImages] = useState([]);
+  const [photoModalOpen, setPhotoModalOpen] = useState(false);
+  const [articleModalOpen, setArticleModalOpen] = useState(false);
 
   const handleImageChange = (e) => {
     const files = e.target.files;
@@ -22,209 +34,137 @@ const PostOptions = ({ isPostChanged, setIsPostChanged }) => {
   const handlePhotoSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    const res = await axios.post(basePath + urls.post.create, data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        authorization: `Bearer ${session.token}`,
-      },
-    });
-    if (res?.status === 200) {
-      toast.success("Posted Photo Successfully");
-    } else {
-      toast.error("Something went wrong!!");
+    try {
+      const res = await axios.post(basePath + urls.post.create, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          authorization: `Bearer ${session.token}`,
+        },
+      });
+      if (res?.status === 200) {
+        toast.success("Posted Photo Successfully");
+        resetForm();
+      }
+    } catch (error) {
+      toast.error("Something went wrong!");
     }
-    setPostCaption("");
-    setPostImages([]);
-    setIsPostChanged(!isPostChanged);
   };
 
   const handleArticleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    const res = await axios.post(basePath + urls.post.create, data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        authorization: `Bearer ${session.token}`,
-      },
-    });
-    if (res?.status === 200) {
-      toast.success("Added article Successfully");
-    } else {
-      toast.error("Something went wrong!!");
+    try {
+      const res = await axios.post(basePath + urls.post.create, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          authorization: `Bearer ${session.token}`,
+        },
+      });
+      if (res?.status === 200) {
+        toast.success("Added article Successfully");
+        resetForm();
+      }
+    } catch (error) {
+      toast.error("Something went wrong!");
     }
+  };
+
+  const resetForm = () => {
     setPostCaption("");
+    setPostImages([]);
+    setPhotoModalOpen(false);
+    setArticleModalOpen(false);
     setIsPostChanged(!isPostChanged);
   };
+
   return (
-    <>
-      <div className="card mb-2 mt-3">
-        <div className="postBox">
-          <div className="profileImgPost">
-            <img
-              src={
-                tempUser?.profilePhoto
-                  ? serverPath + tempUser?.profilePhoto
-                  : profile
-              }
-              alt="profileImg"
-              className="profileImg"
-            />
-          </div>
-          <input
-            type="text"
-            disabled
-            placeholder="Start a post"
-            style={{ backgroundColor: "white" }}
-          />
-        </div>
-        <div className="buttonBox">
-          <div className="specialLink">
-            <Link to="#" data-bs-toggle="modal" data-bs-target="#photoModal">
-              <i className="fa-regular fa-image"></i> Photo
-            </Link>
-          </div>
-          <div className="specialLink">
-            <Link to="#" data-bs-toggle="modal" data-bs-target="#articleModal">
-              <i className="fa-regular fa-newspaper"></i> Write an article
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* photo modal */}
-      <div
-        className="modal fade mt-5"
-        id="photoModal"
-        tabIndex="-1"
-        aria-labelledby="articleModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog">
-          <div
-            className="modal-content"
-            style={{ backgroundColor: "rgb(27, 39, 48)" }}
+    <Card className="relative">
+      <CardContent>
+        <div className="flex items-center justify-around pt-6">
+          <Button
+            variant="ghost"
+            className="flex items-center gap-2"
+            onClick={() => setPhotoModalOpen(true)}
           >
-            <div className="modal-header" style={{ color: "#fff" }}>
-              <h5 className="modal-title" id="exampleModalLabel">
-                Add a Photo
-              </h5>
-              <button
-                type="button"
-                className="btn-close btn-close-white"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body" style={{ color: "#fff" }}>
-              <form onSubmit={handlePhotoSubmit}>
-                <div className="mb-3">
-                  <label htmlFor="exampleInputEmail1" className="form-label">
-                    What's in your mind
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="content.text"
-                    value={postCaption}
-                    onChange={(e) => setPostCaption(e.target.value)}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="exampleInputPassword1" className="form-label">
-                    Image Files
-                  </label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    name="content.media"
-                    autoComplete="off"
-                    onChange={handleImageChange}
-                    multiple
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="btn submitButton"
-                  data-bs-dismiss="modal"
-                  style={{ width: "100%" }}
-                >
-                  Post
-                </button>
-              </form>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div
-        className="modal fade mt-5"
-        id="articleModal"
-        tabIndex="-1"
-        aria-labelledby="articleModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog">
-          <div
-            className="modal-content"
-            style={{ backgroundColor: "rgb(27, 39, 48)" }}
+            <Image className="h-5 w-5" /><p className="text-lg"> Photo</p>
+          </Button>
+          <Button
+            variant="ghost"
+            className="flex items-center gap-2"
+            onClick={() => setArticleModalOpen(true)}
           >
-            <div className="modal-header" style={{ color: "#fff" }}>
-              <h5 className="modal-title" id="exampleModalLabel">
-                Write an Article
-              </h5>
-              <button
-                type="button"
-                className="btn-close btn-close-white"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body" style={{ color: "#fff" }}>
-              <form onSubmit={handleArticleSubmit}>
-                <div className="mb-3">
-                  <label htmlFor="exampleInputEmail1" className="form-label">
-                    What's in your mind
-                  </label>
-                  <textarea
-                    className="form-control"
-                    name="content.text"
-                    rows="3"
-                    value={postCaption}
-                    onChange={(e) => setPostCaption(e.target.value)}
-                  ></textarea>
-                </div>
-                <button
-                  type="submit"
-                  className="btn submitButton"
-                  data-bs-dismiss="modal"
-                  style={{ width: "100%" }}
-                >
-                  Post
-                </button>
-              </form>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-            </div>
-          </div>
+            <FileText className="h-5 w-5" /> <p className="text-lg">Write an article</p>
+          </Button>
         </div>
-      </div>
-    </>
+      </CardContent>
+
+      {/* Photo Modal */}
+      <Dialog open={photoModalOpen} onOpenChange={setPhotoModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add a Photo</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handlePhotoSubmit} className="space-y-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                What's in your mind
+              </label>
+              <Input
+                name="content.text"
+                value={postCaption}
+                onChange={(e) => setPostCaption(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                Image Files
+              </label>
+              <Input
+                type="file"
+                name="content.media"
+                onChange={handleImageChange}
+                multiple
+                className="file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-secondary"
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="secondary" onClick={() => setPhotoModalOpen(false)}>
+                Close
+              </Button>
+              <Button type="submit">Post</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Article Modal */}
+      <Dialog open={articleModalOpen} onOpenChange={setArticleModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Write an Article</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleArticleSubmit} className="space-y-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                What's in your mind
+              </label>
+              <Textarea
+                name="content.text"
+                value={postCaption}
+                onChange={(e) => setPostCaption(e.target.value)}
+                rows={3}
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="secondary" onClick={() => setArticleModalOpen(false)}>
+                Close
+              </Button>
+              <Button type="submit">Post</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </Card>
   );
 };
 

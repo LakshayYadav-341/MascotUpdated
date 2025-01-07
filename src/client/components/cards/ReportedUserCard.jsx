@@ -1,4 +1,4 @@
-import urls, { basePath, serverPath } from '@utils/urls'
+import { basePath, serverPath } from '@utils/urls'
 import axios from 'axios'
 import React from 'react'
 import { useSelector } from 'react-redux'
@@ -6,151 +6,114 @@ import { Link } from 'react-router-dom'
 import { selectSession } from '../auth/authSlice'
 import tempImage from "@client/assets/images/profile.png"
 import { toast } from 'react-toastify'
-import { Typography } from '@mui/material'
 
 const ReportedUserCard = (props) => {
   const session = useSelector(selectSession)
+
   const ignoreHandler = async () => {
     const res = await axios.delete(basePath + urls.report.deleteById.replace(":id", props?.report?.user?._id), {
-      headers: {
-        authorization: `Bearer ${session.token}`
-      }
+      headers: { authorization: `Bearer ${session.token}` }
     })
     if (res?.status === 200) {
-      props.mutate();
+      props.mutate()
       toast.success("Ignored Reported User Successfully")
-    }
-    else {
+    } else {
       toast.error("Something went wrong!!")
     }
   }
+
   const clickHandler = async () => {
     const res1 = await axios.delete(basePath + urls.user.delete.replace(":id", props?.report?.user?._id), {
-      headers: {
-        authorization: `Bearer ${session.token}`
-      }
+      headers: { authorization: `Bearer ${session.token}` }
     })
     const res2 = await axios.delete(basePath + urls.report.deleteById.replace(":id", props?.report?.user?._id), {
-      headers: {
-        authorization: `Bearer ${session.token}`
-      }
+      headers: { authorization: `Bearer ${session.token}` }
     })
     if (res1?.status === 200 && res2?.status === 200) {
-      props.mutate();
+      props.mutate()
       toast.success("Removed User Successfully")
-    }
-    else {
+    } else {
       toast.error("Something went wrong!!")
     }
   }
+
   return (
-    <>
-      <div className="invitation">
+    <div>
+      <div className="bg-gray-800 rounded-lg p-4 shadow-lg">
         <Link to={`/profile/${props?.report?.user?._id}`}>
-          <div className="userProfile networkUserProfile">
-            <div className="profileImgPost">
-              <img
-                src={props?.report.user?.profilePhoto ? serverPath + props?.report.user?.profilePhoto : tempImage}
-                alt="profileImg"
-              />
-            </div>
-            <div className="userInfo">
-              <h5>{props?.report?.user?.name?.first} {props?.report?.user?.name?.last}</h5>
-              <p>{props?.report?.user?.bio}</p>
+          <div className="flex items-start space-x-4">
+            <img
+              src={props?.report.user?.profilePhoto ? serverPath + props?.report.user?.profilePhoto : tempImage}
+              alt="Profile"
+              className="w-12 h-12 rounded-full object-cover"
+            />
+            <div className="flex-1 min-w-0">
+              <h5 className="text-gray-100 font-medium truncate">
+                {props?.report?.user?.name?.first} {props?.report?.user?.name?.last}
+              </h5>
+              <p className="text-gray-400 text-sm">{props?.report?.user?.bio}</p>
             </div>
           </div>
         </Link>
-        <div className="networkOption">
-          <Typography fontSize="1rem">
-          {/* <div className="specialLink"> */}
-            <Link
-              to="#"
-              data-bs-toggle="modal"
-              data-bs-target={`#commentModal${props.report?._id}`}
-            >
-              <i className="fa-solid fa-eye"></i> View Reporters
-            </Link>
-          {/* </div> */}
-          </Typography>
-          <button className="noborderButton" type='button' onClick={ignoreHandler}>Ignore</button>
-          <button className="text-button" style={{ fontSize: "1rem" }} type='button' onClick={clickHandler}>Remove</button>
+
+        <div className="flex items-center justify-end space-x-4 mt-4">
+          <button 
+            className="text-blue-400 hover:text-blue-300 text-base"
+            data-bs-toggle="modal"
+            data-bs-target={`#commentModal${props.report?._id}`}
+          >
+            <i className="fa-solid fa-eye mr-2"></i>View Reporters
+          </button>
+          <button 
+            onClick={ignoreHandler}
+            className="px-4 py-2 bg-gray-700 text-gray-300 rounded hover:bg-gray-600 transition-colors"
+          >
+            Ignore
+          </button>
+          <button 
+            onClick={clickHandler}
+            className="px-4 py-2 bg-red-600 text-gray-300 rounded hover:bg-red-700 transition-colors"
+          >
+            Remove
+          </button>
         </div>
       </div>
+
       <div
         className="modal fade mt-5"
         id={`commentModal${props.report?._id}`}
         tabIndex="-1"
-        aria-labelledby="articleModalLabel"
         aria-hidden="true"
-        style={{ color: "black" }}
       >
         <div className="modal-dialog">
-          <div
-            className="modal-content"
-            style={{ backgroundColor: "#1b2730" }}
-          >
-            <div className="modal-header" style={{ color: "#fff" }}>
-              <h5 className="modal-title" id="exampleModalLabel">
-                Reporters
-              </h5>
+          <div className="bg-gray-800 rounded-lg shadow-xl">
+            <div className="p-4 border-b border-gray-700">
+              <h5 className="text-lg font-medium text-gray-100">Reporters</h5>
             </div>
-            <div className="modal-body">
-              <div
-                className="allLikes"
-                style={{ display: "flex", flexDirection: "column" }}
-              >
-                {
-                  props?.report?.by.map((rep, index) => (
-                    <div className="userProfile" key={index}>
-                      <div className="profileImgPost">
-                        <img
-                          src={
-                            rep?.user?.profilePhoto
-                              ? serverPath + rep?.user.profilePhoto
-                              : tempImage
-                          }
-                          alt="profileImg"
-                        />
-                      </div>
-                      <div
-                        className="userInfo"
-                        style={{
-                          borderRadius: "10px",
-                          backgroundColor: "rgb(231, 231, 231)",
-                          padding: "0.25rem 0.5rem",
-                          width: "80%",
-                        }}
-                      >
-                        <h6
-                          style={{
-                            color: "rgb(129, 129, 129)",
-                            margin: "0",
-                          }}
-                        >
-                          {rep?.user.name.first}{" "}
-                          {rep?.user.name.last}
-                        </h6>
-                        <p
-                          style={{
-                            color: "rgb(129, 129, 129)",
-                            fontSize: "0.75rem",
-                          }}
-                        >
-                          {rep?.user.bio}
-                        </p>
-                        <p style={{ marginTop: "1rem" }}>
-                          {rep?.reason}
-                        </p>
-                      </div>
+            <div className="p-4">
+              <div className="space-y-4">
+                {props?.report?.by.map((rep, index) => (
+                  <div key={index} className="flex items-start space-x-4">
+                    <img
+                      src={rep?.user?.profilePhoto ? serverPath + rep?.user.profilePhoto : tempImage}
+                      alt="Profile"
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                    <div className="flex-1 bg-gray-700 rounded-lg p-3">
+                      <h6 className="text-gray-300 font-medium">
+                        {rep?.user.name.first} {rep?.user.name.last}
+                      </h6>
+                      <p className="text-gray-400 text-sm">{rep?.user.bio}</p>
+                      <p className="text-gray-300 mt-2 text-sm">{rep?.reason}</p>
                     </div>
-                  ))
-                }
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="modal-footer">
+            <div className="flex justify-end p-4 border-t border-gray-700">
               <button
                 type="button"
-                className="btn btn-secondary"
+                className="px-4 py-2 bg-gray-700 text-gray-300 rounded hover:bg-gray-600 transition-colors"
                 data-bs-dismiss="modal"
               >
                 Close
@@ -159,7 +122,7 @@ const ReportedUserCard = (props) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

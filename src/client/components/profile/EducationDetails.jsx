@@ -1,52 +1,55 @@
 import React from "react";
-import { Link } from "react-router-dom"; // Assuming you're using Next.js
+import { Link } from "react-router-dom";
 
 const EducationDetails = ({ isAdmin, hasProfile, education = [], others, onAddEducation }) => {
   if (isAdmin || !hasProfile) {
     return null;
   }
 
+  const formatDate = (date) => {
+    // Add your date formatting logic here
+    return date; // Placeholder return
+  };
+
   return (
-    <div className="profile-card card">
-      <div className="about-title section-title">
-        <div style={{ fontSize: "22px", fontWeight: "bold" }}>Education</div>
-        <div
-          className="button-container"
-          style={{ display: "flex", flexDirection: "row", gap: "2rem" }}
-        >
-          {!others && (
-            <div>
-              <Link data-bs-toggle="modal" onClick={onAddEducation}>
-                <span className="material-symbols-rounded about-edit">add</span>
-              </Link>
-            </div>
-          )}
-        </div>
+    <div className="w-full bg-gray-800 rounded-lg shadow-xl p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-100">Education</h2>
+
+        {!others && (
+          <div>
+            <Link
+              onClick={onAddEducation}
+              className="text-blue-500 hover:text-blue-400 cursor-pointer flex items-center"
+            >
+              <span className="material-symbols-rounded text-2xl">add</span>
+            </Link>
+          </div>
+        )}
       </div>
 
-      <div className="education-container">
-        <div className="education-main" style={{ flexDirection: "column" }}>
-          {education.length > 0 ? (
-            education.map((ed, id) => (
-              <div
-                style={{ fontSize: "12px", borderBottom: "1px solid white" }}
-                key={id}
-              >
-                <div style={{ fontWeight: "bold", fontSize: "18px" }}>
-                  {ed?.institute?.name}
-                </div>
-                <div>
-                  Joined in {formatDate(ed?.joined)}{" "}
-                  <span style={{ fontSize: "15px" }}>•</span> Education Type:{" "}
-                  {ed?.type}
-                </div>
-                <div style={{ paddingTop: "7px" }}></div>
+      <div className="space-y-4">
+        {education.length > 0 ? (
+          education.map((ed, id) => (
+            <div
+              key={id}
+              className="pb-4 border-b border-gray-700 last:border-0"
+            >
+              <h3 className="text-lg font-bold text-gray-100 mb-2">
+                {ed?.institute?.name}
+              </h3>
+              <div className="text-sm text-gray-300 flex items-center gap-2">
+                <span>Joined in {formatDate(ed?.joined)}</span>
+                <span className="text-gray-500">•</span>
+                <span>Education Type: {ed?.type}</span>
               </div>
-            ))
-          ) : (
-            <h1 style={{ fontSize: "1rem" }}>No Education Detail added</h1>
-          )}
-        </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-base text-gray-400">
+            No Education Detail added
+          </div>
+        )}
       </div>
     </div>
   );

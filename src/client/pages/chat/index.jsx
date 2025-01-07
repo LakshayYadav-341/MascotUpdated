@@ -8,55 +8,57 @@ import { selectLoggedInUser, selectSession } from "../../components/auth/authSli
 import ChatBox from "../../components/chatBox/ChatBox";
 import Conversation from "../../components/conversation/Conversation";
 import Loading from "../../components/loading";
-import "./chat.css";
 
 const Chat = () => {
-  const location = useLocation()
-  const searchParams = new URLSearchParams(location.search)
-  const userId = searchParams.get('userId')
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const userId = searchParams.get("userId");
   const socket = useRef();
-  const user = useSelector(selectLoggedInUser)
-  const session = useSelector(selectSession)
+  const user = useSelector(selectLoggedInUser);
+  const session = useSelector(selectSession);
   const [chats, setChats] = useState([]);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
   const [sendMessage, setSendMessage] = useState(null);
   const [receivedMessage, setReceivedMessage] = useState(null);
   const [isChatChanged, setIsChatChanged] = useState(false);
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const getChat = async () => {
       try {
         const { data } = await axios.get(basePath + urls.chat.findChat.replace(":userId", userId), {
           headers: {
-            authorization: `Bearer ${session.token}`
-          }
+            authorization: `Bearer ${session.token}`,
+          },
         });
         if (Object.keys(data.data).length !== 0) {
-          setCurrentChat(data.data)
+          setCurrentChat(data.data);
           return;
-        }
-        else {
-          const res = await axios.post(basePath + urls.chat.create, { user: userId }, {
-            headers: {
-              authorization: `Bearer ${session.token}`
+        } else {
+          const res = await axios.post(
+            basePath + urls.chat.create,
+            { user: userId },
+            {
+              headers: {
+                authorization: `Bearer ${session.token}`,
+              },
             }
-          })
+          );
 
           if (res?.data?.data) {
-            setCurrentChat(res?.data?.data)
-            setIsChatChanged(!isChatChanged)
-            setLoading(true)
+            setCurrentChat(res?.data?.data);
+            setIsChatChanged(!isChatChanged);
+            setLoading(true);
           }
-        } 
-      }
-        catch (error) {
-          console.error("Error fetching chat:", error.message);
         }
-      };
+      } catch (error) {
+        console.error("Error fetching chat:", error.message);
+      }
+    };
 
-      if (userId) getChat();
-    }, [userId, session.token]);
+    if (userId) getChat();
+  }, [userId, session.token]);
 
   // Fetch all chats for the user
   useEffect(() => {
@@ -118,39 +120,53 @@ const Chat = () => {
   };
 
   return (
-    <div className="Chat" style={{ marginTop: "5rem" }}>
+    <div className="flex flex-col md:flex-row h-full bg-gray-900 text-gray-300">
       {/* Left Side */}
-      <div className="Left-side-chat">
-        <div className="Chat-container">
-          <h2>Chats</h2>
-          <div className="Chat-list">
-            {loading ? (
+      <div className="w-full md:w-1/3 h-full flex flex-col border-r border-gray-700">
+        <div className="p-4 border-b border-gray-700">
+          <h2 className="text-lg font-bold">Chats</h2>
+        </div>
+        <div className="flex-1 overflow-y-auto">
+          {loading ? (
+            <div className="flex justify-center items-center h-full">
               <Loading />
-            ) : chats.length > 0 ? (
-              chats.map((chat, id) => (
-                <div key={id} onClick={() => setCurrentChat(chat)}>
-                  <Conversation
-                    data={chat}
-                    currentUser={user}
-                    online={checkOnlineStatus(chat)}
-                  />
-                </div>
-              ))
-            ) : (
-              <span>No chats found!</span>
-            )}
-          </div>
+            </div>
+          ) : chats.length > 0 ? (
+            chats.map((chat, id) => (
+              <div
+                key={id}
+                onClick={() => setCurrentChat(chat)}
+                className="cursor-pointer p-4 hover:bg-gray-800 transition"
+              >
+                <Conversation
+                  data={chat}
+                  currentUser={user}
+                  online={checkOnlineStatus(chat)}
+                />
+              </div>
+            ))
+          ) : (
+            <div className="flex justify-center items-center h-full">
+              <span className="text-gray-400">No chats found!</span>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Right Side */}
-      <div className="Right-side-chat">
-        <ChatBox
-          chat={currentChat}
-          currentUser={user}
-          setSendMessage={setSendMessage}
-          receivedMessage={receivedMessage}
-        />
+      <div className="w-full md:w-2/3 h-full flex flex-col">
+        {currentChat ? (
+          <ChatBox
+            chat={currentChat}
+            currentUser={user}
+            setSendMessage={setSendMessage}
+            receivedMessage={receivedMessage}
+          />
+        ) : (
+          <div className="flex justify-center items-center flex-1">
+            <span className="text-gray-400">Select a chat to start messaging</span>
+          </div>
+        )}
       </div>
     </div>
   );

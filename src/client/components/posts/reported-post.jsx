@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import urls, { basePath, serverPath } from "@utils/urls";
 import tempImage from "@client/assets/images/profile.png";
-import { Link } from "react-router-dom";
 import { useGetter } from "../../hooks/fetcher";
 import { selectSession } from "../auth/authSlice";
 import axios from "axios";
-import { Typography } from "@mui/material";
 import { toast } from "react-toastify";
 import PostCard from "./PostCard";
 
@@ -134,222 +132,134 @@ const ReportedPost = () => {
 
   return (
     <>
-      <div className="row mx-auto" style={{ maxWidth: "1400px" }}>
-        <div className="col-1"></div>
-        <div className="col-10 p-4" style={{ background: "#1b2730", borderRadius: "10px" }}>
-          <section className="main">
-            <div className="main-top my-2">
-              <Typography>
-                <p
-                  style={{
-                    color: "White",
-                    fontSize: "2.5rem",
-                    fontWeight: "600",
-                    marginBottom: "0.3rem"
-                  }}
-                >
-                  Reported Posts
-                </p>
-              </Typography>
-            </div>
-            <section className="attendance" style={{ boxShadow: "1px 1px 20px 0px black", borderRadius: "10px" }}>
-              <div className="attendance-list">
-                <table className="tablebg align-middle">
-                  <thead>
-                    <tr>
-                      <th scope="col">SNo.</th>
-                      <th scope="col">Post ID</th>
-                      <th scope="col">Reports</th>
-                      <th scope="col">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {uniquePosts?.length > 0 ? (
-                      uniquePosts.map((report, id) => (
-                        <tr key={id}>
-                          <td className="ms-2">{id + 1}</td>
-                          <td>
-                            <div className="specialLink">
-                              <Link
-                                to="#"
-                                data-bs-toggle="modal"
-                                data-bs-target={'#postModal'}
-                                onClick={() => {
-                                  showReportedPost(report?.post?._id);
-                                }}
-                                style={{ color: "white" }}
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="flex flex-col lg:flex-row gap-4">
+          <div className="hidden lg:block lg:w-1/12"></div>
+          <div className="flex-1 p-4 bg-gray-800 rounded-lg">
+            <section>
+              <div className="mb-4">
+                <h1 className="text-gray-300 text-3xl font-bold">Reported Posts</h1>
+              </div>
+              <section className="bg-gray-900 rounded-lg shadow-lg overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-gray-400">
+                    <thead className="bg-gray-700">
+                      <tr>
+                        <th className="px-4 py-2">SNo.</th>
+                        <th className="px-4 py-2">Post ID</th>
+                        <th className="px-4 py-2">Reports</th>
+                        <th className="px-4 py-2">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {uniquePosts?.length > 0 ? (
+                        uniquePosts.map((report, id) => (
+                          <tr key={id} className="border-b border-gray-700">
+                            <td className="px-4 py-2">{id + 1}</td>
+                            <td className="px-4 py-2">
+                              <button
+                                className="text-blue-400 hover:underline"
+                                onClick={() => showReportedPost(report?.post?._id)}
                               >
                                 {report?.post?._id}
-                              </Link>
-                            </div>
-
-                          </td>
-                          <td>
-                            <div className="specialLink">
-                              <Link
-                                to="#"
-                                data-bs-toggle="modal"
-                                data-bs-target={`#reportModal${report?.post?._id}`}
-                                onClick={() => {
-                                  showReportingUsers(report?.post?._id);
-                                }}
-                                style={{ color: "white" }}
-                              >
-                                <i className="fa-solid fa-eye"></i> View Reporters
-                              </Link>
-                            </div>
-                          </td>
-                          <td>
-                            <div className="postOptions">
+                              </button>
+                            </td>
+                            <td className="px-4 py-2">
                               <button
-                                className="btn"
-                                style={{background: "#808080", outline: "none", border: "none", color: "white"}}
-                                type="button"
+                                className="text-blue-400 hover:underline"
+                                onClick={() => showReportingUsers(report?.post?._id)}
+                              >
+                                View Reporters
+                              </button>
+                            </td>
+                            <td className="px-4 py-2 flex space-x-2">
+                              <button
+                                className="bg-gray-500 text-gray-300 px-3 py-1 rounded hover:bg-gray-600"
                                 onClick={() => ignoreHandler(report)}
                               >
                                 Ignore
                               </button>
-
                               <button
-                                className="btn btn-outline-danger ms-2"
-                                type="button"
-                                style={{background: "#E74C3C", outline: "none", border: "none", color: "white"}}
+                                className="bg-red-600 text-gray-300 px-3 py-1 rounded hover:bg-red-700"
                                 onClick={() => removeHandler(report)}
                               >
                                 Delete Post
                               </button>
-
-                            </div>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="4" className="px-4 py-2 text-center">
+                            <h3 className="text-gray-400">No Reported Posts Found!</h3>
                           </td>
                         </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="4">
-                          <h3>No Reported Post Found!!</h3>
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
             </section>
-          </section>
+          </div>
         </div>
       </div>
 
+      {/* Modals */}
       {uniquePosts?.map((report, id) => (
         <div
           key={id}
-          className="modal fade mt-5"
-          id={`reportModal${report?.post?._id}`}
-          data-bs-backdrop="true"
-          tabIndex={-1}
-          aria-labelledby="articleModalLabel"
-          aria-hidden="true"
-          style={{ color: "black" }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
         >
-          <div className="modal-dialog">
-            <div
-              className="modal-content"
-              style={{ backgroundColor: "#1b2730" }}
-            >
-              <div className="modal-header" style={{ color: "#fff" }}>
-                <h5 style={{ fontWeight: "600", letterSpacing: "0.6px" }} className="modal-title" id="exampleModalLabel">
-                  Reports by Users
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close  btn-close-white"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                  style={{ fontSize: "1.2rem" }}
-                  onClick={() => {
-                    updateReportData(null);
-                  }}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <div
-                  className="allLikes"
-                  style={{ display: "flex", flexDirection: "column" }}
-                >
-                  {reportData &&
-                    reportData.data?.map((report, index) => (
-                      <div className="userProfile" key={index}>
-                        <div className="profileImgPost">
-                          <Link to={`/profile/${report?.by?._id}`}>
-                            <img
-                              src={
-                                report?.by?.profilePhoto
-                                  ? serverPath + report?.by.profilePhoto
-                                  : tempImage
-                              }
-                              data-bs-dismiss="modal"
-                              alt="profileImg"
-                            />
-                          </Link>
-                        </div>
-                        <div
-                          className="userInfo"
-                          style={{
-                            borderRadius: "10px",
-                            backgroundColor: "#05141c",
-                            color: "white",
-                            padding: "0.25rem 0.5rem",
-                            width: "80%",
-                          }}
-                        >
-                          <h5 className="mb-0 pb-0">{report?.by?.name?.first} {report?.by?.name?.last}</h5>
-                          <hr className="m-0 p-0" />
-                          <p style={{ marginTop: "1rem" }}>{report?.reason}</p>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-              <div className="modal-footer">
-              </div>
+          <div className="bg-gray-800 rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-1/2">
+            <div className="flex justify-between items-center p-4 border-b border-gray-700">
+              <h5 className="text-gray-300 font-semibold">Reports by Users</h5>
+              <button
+                className="text-gray-300 hover:text-gray-400"
+                onClick={() => updateReportData(null)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-4">
+              {reportData &&
+                reportData.data?.map((report, index) => (
+                  <div key={index} className="flex items-center mb-4">
+                    <img
+                      src={
+                        report?.by?.profilePhoto
+                          ? serverPath + report?.by.profilePhoto
+                          : tempImage
+                      }
+                      alt="Profile"
+                      className="w-10 h-10 rounded-full mr-4"
+                    />
+                    <div className="flex-1 bg-gray-700 p-2 rounded-lg text-gray-300">
+                      <h5>{report?.by?.name?.first} {report?.by?.name?.last}</h5>
+                      <p className="text-sm mt-1">{report?.reason}</p>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
       ))}
 
-      <div
-        className="modal fade mt-5"
-        data-bs-backdrop="true"
-        id={`postModal`}
-        tabIndex={-1}
-        aria-labelledby="postModal"
-        aria-hidden="true"
-        style={{ color: "black" }}
-      >
-        <div className="modal-dialog modal-lg">
-          <div
-            className="modal-content"
-            style={{ backgroundColor: "#1b2730" }}
-          >
-            <div className="modal-header" style={{ color: "#fff" }}>
-              <h4 className="modal-title" id="exampleModalLabel">
-                Reported Post
-              </h4>
-              <button
-                type="button"
-                className="btn-close  btn-close-white"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                style={{ fontSize: "1.2rem" }}
-                onClick={() => {
-                  setShowPost(false);
-                  setPost(null);
-                }}
-              ></button>
-            </div>
-            <div className="modal-body">
-              <Typography>
-                {showPost && <PostCard report={true} post={post}></PostCard>}
-              </Typography>
-            </div>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="bg-gray-800 rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-1/2">
+          <div className="flex justify-between items-center p-4 border-b border-gray-700">
+            <h4 className="text-gray-300 font-semibold">Reported Post</h4>
+            <button
+              className="text-gray-300 hover:text-gray-400"
+              onClick={() => {
+                setShowPost(false);
+                setPost(null);
+              }}
+            >
+              ×
+            </button>
+          </div>
+          <div className="p-4">
+            {showPost && <PostCard report={true} post={post} />}
           </div>
         </div>
       </div>
